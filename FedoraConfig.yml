@@ -1,0 +1,92 @@
+---
+  - name: Install Basic Packages
+    hosts: Linux
+    tasks:
+      - name: Snap
+        dnf:
+          name: snapd
+          state: latest
+        
+      - name: Terminator
+        dnf:
+          name: terminator
+          state: latest
+
+      - name: Yakuake
+        dnf:
+          name: yakuake
+          state: latest
+          
+      - name: Fish Shell
+        dnf:
+          name: fish
+          state: latest
+      
+      - name: WGET
+        dnf:
+          name: wget
+          state: latest
+
+      - name: Syncthing
+        dnf:
+          name: syncthing
+          state: latest
+
+  - name: RPMs Downloads
+    hosts: Linux
+    tasks:
+      - name: Vivaldi
+        get_url:
+          url: https://downloads.vivaldi.com/stable/vivaldi-stable-3.2.1967.47-1.x86_64.rpm
+          dest: /home/$USER/Downloads
+      
+      - name: Only Office
+        get_url: 
+          url: https://download.onlyoffice.com/install/desktop/editors/linux/onlyoffice-desktopeditors.x86_64.rpm
+          dest: /home/$USER/Downloads
+
+      - name: RealVNC Viewer
+        get_url: 
+          url: https://www.realvnc.com/download/file/viewer.files/VNC-Viewer-6.20.529-Linux-x64.rpm
+          dest: /home/$USER/Downloads/VNC-Viewer-6.20.529-Linux-x64.rpm
+
+      - name: Zoom
+        get_url: 
+          url: https://zoom.us/client/latest/zoom_x86_64.rpm
+          dest: /home/$USER/Downloads/zoom_x86_64.rpm
+
+      - name: MS Fonts
+        get_url: 
+          url: https://sourceforge.net/projects/mscorefonts2/files/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm/download -O msttcore-fonts-installer-2.6-1.noarch.rpm
+          dest: /home/$USER/Downloads
+
+      #- name: Joplin
+      #  action: shell wget -O - https://raw.githubusercontent.com/laurent22/joplin/dev/Joplin_install_and_update.sh | bash
+
+  - name: Install Basic Terminal Tools
+    hosts: Linux
+    tasks:
+      - name: Htop
+        dnf:
+          name: htop
+          state: latest
+
+      - name: Net-Tools
+        dnf:
+          name: net-tools
+          state: latest
+
+      - name: Nmap
+        dnf:
+          name: nmap
+          state: latest
+      
+      - name: IOtop
+        dnf:
+          name: iotop
+          state: latest
+
+      - name: IFtop
+        dnf:
+          name: iftop
+          state: latest
