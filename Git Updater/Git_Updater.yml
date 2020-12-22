@@ -2,8 +2,18 @@
   - name: Update Github Repos
     hosts: Servers
     tasks:
-      name: Ansible Playbooks
-      git:
-        repo: git@github.com:ryanvanmass/Ansible_Playbook.git
-        dest: /mnt/NetworkShares/Olympus/Scripts/Ansible_Playbook
-        update: yes
+      - name: Ansible Playbooks
+        git:
+          repo: git@github.com:ryanvanmass/Ansible_Playbook.git
+          dest: /mnt/NetworkShares/Olympus/Scripts/Ansible_Playbook
+          update: yes
+      - name: Bash Bunny
+        git:
+          repo: git@github.com:ryanvanmass/BashBunny.git
+          dest: /mnt/NetworkShares/Olympus/Scripts/BashBunny
+          update: yes
+      - name: Wifi Pineapple
+        git:
+          repo: git@github.com:ryanvanmass/WifiPineapple.git
+          dest: /mnt/NetworkShares/Olympus/Scripts/WifiPineapple
+          updates: yes
