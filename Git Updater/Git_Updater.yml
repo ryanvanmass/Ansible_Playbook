@@ -1,0 +1,9 @@
+---
+  - name: Update Github Repos
+    hosts: Servers
+    tasks:
+      name: Ansible Playbooks
+      git:
+        repo: git@github.com:ryanvanmass/Ansible_Playbook.git
+        dest: /mnt/NetworkShares/Olympus/Scripts/Ansible_Playbook
+        update: yes

@@ -1,6 +1,6 @@
 ---
   - name: Install Basic Packages
-    hosts: Linux
+    hosts: 
     tasks:
       - name: Snap
         dnf:
@@ -31,9 +31,15 @@
         dnf:
           name: syncthing
           state: latest
+      - name: Cockpit
+        dnf:
+          name: cockpit
+          state: latest
+      - name: Enable Cockpit
+        action: shell systemctl enable --now cockpit.socket
 
   - name: RPMs Downloads
-    hosts: Linux
+    hosts:  
     tasks:
       - name: Vivaldi
         get_url:
@@ -42,29 +48,28 @@
       
       - name: Only Office
         get_url: 
-          url: https://download.onlyoffice.com/install/desktop/editors/linux/onlyoffice-desktopeditors.x86_64.rpm
+          url: https://download.onlyoffice.com/install/desktop/editors/ /onlyoffice-desktopeditors.x86_64.rpm
           dest: /home/$USER/Downloads
 
       - name: RealVNC Viewer
         get_url: 
-          url: https://www.realvnc.com/download/file/viewer.files/VNC-Viewer-6.20.529-Linux-x64.rpm
-          dest: /home/$USER/Downloads/VNC-Viewer-6.20.529-Linux-x64.rpm
+          url: https://www.realvnc.com/download/file/viewer.files/VNC-Viewer-6.20.529- -x64.rpm
+          dest: /home/$USER/Downloads
 
       - name: Zoom
         get_url: 
           url: https://zoom.us/client/latest/zoom_x86_64.rpm
-          dest: /home/$USER/Downloads/zoom_x86_64.rpm
+          dest: /home/$USER/Downloads
 
       - name: MS Fonts
-        get_url: 
-          url: https://sourceforge.net/projects/mscorefonts2/files/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm/download -O msttcore-fonts-installer-2.6-1.noarch.rpm
-          dest: /home/$USER/Downloads
+        # Not using get_url due to unusual URL
+        action: shell wget -P /home/$USER/Downloads https://sourceforge.net/projects/mscorefonts2/files/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm/download -O msttcore-fonts-installer-2.6-1.noarch.rpm 
 
       #- name: Joplin
       #  action: shell wget -O - https://raw.githubusercontent.com/laurent22/joplin/dev/Joplin_install_and_update.sh | bash
 
   - name: Install Basic Terminal Tools
-    hosts: Linux
+    hosts:  
     tasks:
       - name: Htop
         dnf:
@@ -90,3 +95,16 @@
         dnf:
           name: iftop
           state: latest
+  
+  - name: Install Snaps
+    hosts:  
+    tasks:
+      - name: Telegram
+        snap:
+          name: telegram-desktop
+      - name: Spotify
+        snap:
+          name: spotify
+      - name: Super Productivity
+        snap:
+          name: superproductivity
