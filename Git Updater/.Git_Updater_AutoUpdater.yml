@@ -1,0 +1,10 @@
+---
+  - name: Update Git_Updater Playbook
+    hosts: localhost
+    connection: local
+    tasks:
+      - name: Updating Playbook
+        git:
+          repo: https://github.com/ryanvanmass/Ansible_Playbook
+          dest: /root/Playbooks
+          update: yes

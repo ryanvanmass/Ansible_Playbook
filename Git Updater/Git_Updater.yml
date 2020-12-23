@@ -17,3 +17,4 @@
           repo: git@github.com:ryanvanmass/WifiPineapple.git
           dest: /mnt/NetworkShares/Olympus/Scripts/WifiPineapple
           update: yes
+          
