@@ -14,6 +14,7 @@
         dnf:
           name: cockpit-podman
           state: latest
+  
   - name: upodder setup
     hosts:
     tasks: 
@@ -27,5 +28,28 @@
           state: directory
       - name: Copy AddPodcast.sh to server
         copy:
-          src: /root/Playbooks/'Digital Ocean Rebuild'/AddPodcast.sh
+          src: /root/Playbooks/Digital Ocean Rebuild/AddPodcast.sh
           dest: /root/Podcasts/
+      - name: Create the template folder
+        file:
+          path: /root/Podcasts/.Template
+          state: directory
+      - name: Copy Template sql database file to server
+        copy:
+          src: /root/Playbooks/Digital Ocean Rebuild/Upodder Template/seen.sqlite
+          dest: /root/Podcasts/.Template
+      - name: Copy Template Subcriptions file to server
+        copy:
+          src: /root/Playbooks/Digital Ocean Rebuild/Upodder Template/subscriptions
+          dest: /root/Podcasts/.Template
+
+  - name: Crontab Setup
+    hosts:
+    tasks:
+      - name: Container Cleanup
+        cron:
+          name: Container Cleanup
+          hour: "23"
+          minute: "50"
+          job: "podman rm --all"
+           
