@@ -21,7 +21,11 @@
         podman_image:
           name: ryanvanmass/upodder
           tag: v3
+      - name: Create Podcasts Directory
+        file: 
+          path: /root/Podcasts
+          state: directory
       - name: Copy AddPodcast.sh to server
         copy:
-        src: /root/Playbooks/'Digital Ocean Rebuild'/AddPodcast.sh
-        dest: /root/Podcasts/AddPodcast.sh
+          src: /root/Playbooks/'Digital Ocean Rebuild'/AddPodcast.sh
+          dest: /root/Podcasts/
