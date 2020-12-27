@@ -46,10 +46,35 @@
   - name: Crontab Setup
     hosts:
     tasks:
+      - name: Install Cronie
+        dnf:
+          name: cronie
+          state: latest
       - name: Container Cleanup
         cron:
           name: Container Cleanup
           hour: "23"
           minute: "50"
           job: "podman rm --all"
-           
+
+  - name: Create SMB mount point
+    hosts:
+    vars_prompt:
+      - name: SMB Username
+        prompt: What is the SMB Username?
+      - name: SMB Password
+        prompt: What is the SMB Password?
+      - name: SMB Share IP Address
+        prompt: What is the IP address of the SMB Share?
+    tasks:
+      - name: Create Mount Point Directory
+        file:
+          path: /media/root/PodcastSync
+          state: directory
+      - name: create Fstab Entry
+        mount:
+          state: "mounted"
+          fstype: "cifs"
+          name: /media/root/PodcastSync
+          src: //"SMB Share IP Address"/PodcastSync
+          opts: username="SMB Username",password="SMB Password"
