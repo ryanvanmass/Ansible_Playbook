@@ -62,14 +62,16 @@
     vars_prompt:
       - name: SMB_Username
         prompt: What is the SMB Username?
+        private: no
       - name: SMB_Password
         prompt: What is the SMB Password?
       - name: SMB_IP
         prompt: What is the IP address of the SMB Share?
+        private: no
     tasks:
       - name: Create Mount Point Directory
         file:
-          path: /media/root/PodcastSync
+          path: /media/root/PodcastSync/
           state: directory
       - name: create Fstab Entry
         mount:

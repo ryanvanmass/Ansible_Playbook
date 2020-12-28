@@ -1,0 +1,41 @@
+---
+  - name: Downloading Scripts for Setting up OpenVPN and PiHole
+    hosts: localhost
+    tasks:
+      - name: OpenVPN
+        shell: wget https://git.io/vpn -O openvpn-install.sh && chmod 755 openvpn-install.sh
+      - name: PiHole
+        get_url:
+          url: https://raw.githubusercontent.com/pi-hole/pi-hole/master/automated%20install/basic-install.sh 
+          dest: /root/
+    
+  - name: Configure SMB Share
+    hosts: localhost
+    vars_prompt:
+      - name: SMB_Password
+        prompt: What would you like the SMB Password to be?
+    tasks:
+      - name: Install Samba
+        dnf:
+          name: samba
+          state: latest
+      - name: Create Samba Share Directory
+        file:
+          path: /mnt/Chimaera_PodcastSync
+          state: directory
+      - name: Remove Preinstalled Template Config
+        file:
+          path: /etc/samba/smb.conf
+          state: absent
+      - name: Configure Samba
+        copy:
+          src: /root/Playbooks/Digital Ocean Rebuild/Samba.config
+          dest: /etc/samba/smb.conf
+      - name: Create SMB USer
+        shell: adduser ryan
+      - name: Configure SMB User
+        expect:
+          command: smbpasswd -a ryan
+          responses:
+            New SMB password: "{{SMB_Password}}"
+            Retype new SMB password: "{{SMB_Password}}"
