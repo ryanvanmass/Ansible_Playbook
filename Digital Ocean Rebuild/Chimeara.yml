@@ -60,11 +60,11 @@
   - name: Create SMB mount point
     hosts:
     vars_prompt:
-      - name: SMB Username
+      - name: SMB_Username
         prompt: What is the SMB Username?
-      - name: SMB Password
+      - name: SMB_Password
         prompt: What is the SMB Password?
-      - name: SMB Share IP Address
+      - name: SMB_IP
         prompt: What is the IP address of the SMB Share?
     tasks:
       - name: Create Mount Point Directory
@@ -76,5 +76,5 @@
           state: "mounted"
           fstype: "cifs"
           name: /media/root/PodcastSync
-          src: //"SMB Share IP Address"/PodcastSync
-          opts: username="SMB Username",password="SMB Password"
+          src: //{{SMB_IP}}/PodcastSync
+          opts: username={{SMB_Username}},password={{SMB_Password}},noperm
