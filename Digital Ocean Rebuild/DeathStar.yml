@@ -28,3 +28,9 @@
           name: nfs-server
           state: restarted
           daemon_reload: yes
+      - name: Allow NFS through Firewall
+        firewalld:
+          service: nfs
+          permanent: yes
+          state: enabled
+          imediate: yes

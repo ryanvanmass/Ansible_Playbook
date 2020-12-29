@@ -73,5 +73,7 @@
           state: "mounted"
           fstype: "nfs"
           name: /media/root/PodcastSync
-          src: //{{NFS_IP}}:/media/PodcastSync
+          src: {{NFS_IP}}:/media/PodcastSync
           opts: defaults
+          dump: 0
+          passno: 0
