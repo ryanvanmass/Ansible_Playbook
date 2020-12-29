@@ -1,0 +1,30 @@
+---
+  - name: Downloading Scripts for Setting up OpenVPN and PiHole
+    hosts: localhost
+    tasks:
+      - name: OpenVPN
+        shell: wget https://git.io/vpn -O /root/openvpn-install.sh && chmod 755 /root/openvpn-install.sh
+      - name: PiHole
+        get_url:
+          url: https://raw.githubusercontent.com/pi-hole/pi-hole/master/automated%20install/basic-install.sh 
+          dest: /root/
+    
+  - name: Configure NFS
+    hosts: localhost
+    vars_prompt:
+      - name: NFS_Network
+        prompt: What is the Network address for the NFS Share?
+        private: no
+    tasks:
+      - name: Create NFS Share Mount Point
+        file:
+          path: /media/PodcastSync
+          state: directory
+          mode: 0777
+      - name: Create NFS Export Entry
+        shell: echo "/media/PodcastSync {{NFS_Network}}(rw,sync,no_root_squash)" >> /etc/exports
+      - name: Restart NFS Service
+        systemd:
+          name: nfs-server
+          state: restarted
+          daemon_reload: yes
