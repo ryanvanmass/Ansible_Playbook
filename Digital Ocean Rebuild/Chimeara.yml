@@ -42,6 +42,10 @@
         copy:
           src: /root/Playbooks/Digital Ocean Rebuild/Upodder Template/subscriptions
           dest: /root/Podcasts/.Template
+      - name: Set SELinux Policy
+        selinux:
+          policy: targeted
+          state: permissive
 
   - name: Crontab Setup
     hosts:
