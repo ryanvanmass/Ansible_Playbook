@@ -20,8 +20,8 @@
     tasks: 
       - name: Download my upodder docker image
         podman_image:
-          name: ryanvanmass/upodder
-          tag: v3
+          name: ryanvanmass/do_upodder
+          tag: v1
       - name: Create Podcasts Directory
         file: 
           path: /root/Podcasts
