@@ -9,33 +9,21 @@
           url: https://raw.githubusercontent.com/pi-hole/pi-hole/master/automated%20install/basic-install.sh 
           dest: /root/
     
-  - name: Configure SMB Share
+  - name: Configure NFS
     hosts: localhost
     vars_prompt:
-      - name: SMB_Password
-        prompt: What would you like the SMB Password to be?
+      - name: NFS_Network
+        prompt: What is the Network address for the NFS Share?
     tasks:
-      - name: Install Samba
-        dnf:
-          name: samba
-          state: latest
-      - name: Create Samba Share Directory
+      - name: Create NFS Share Mount Point
         file:
-          path: /mnt/Chimaera_PodcastSync
+          path: /media/PodcastSync
           state: directory
-      - name: Remove Preinstalled Template Config
-        file:
-          path: /etc/samba/smb.conf
-          state: absent
-      - name: Configure Samba
-        copy:
-          src: /root/Playbooks/Digital Ocean Rebuild/Samba.config
-          dest: /etc/samba/smb.conf
-#      - name: Create SMB USer
-#        shell: adduser ryan
-      - name: Configure SMB User
-        expect:
-          command: smbpasswd -a root
-          responses:
-            New SMB password: "{{SMB_Password}}"
-            Retype new SMB password: "{{SMB_Password}}"
+          mode: 0777
+      - name: Create NFS Export Entry
+        shell: echo "/media/PodcastSync {{NFS_Network}}(rw,sync,no_root_squash) >> /etc/exports"
+      - name: Restart NFS Service
+        systemd:
+          name: nfs-server
+          state: restarted
+          daemon_reload: yes
