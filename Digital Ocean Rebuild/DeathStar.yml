@@ -33,4 +33,4 @@
           service: nfs
           permanent: yes
           state: enabled
-          imediate: yes
+          immediate: yes
