@@ -31,11 +31,11 @@
         copy:
           src: /root/Playbooks/Digital Ocean Rebuild/Samba.config
           dest: /etc/samba/smb.conf
-      - name: Create SMB USer
-        shell: adduser ryan
+#      - name: Create SMB USer
+#        shell: adduser ryan
       - name: Configure SMB User
         expect:
-          command: smbpasswd -a ryan
+          command: smbpasswd -a root
           responses:
             New SMB password: "{{SMB_Password}}"
             Retype new SMB password: "{{SMB_Password}}"
