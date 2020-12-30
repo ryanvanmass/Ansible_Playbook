@@ -25,5 +25,5 @@ echo " " >> /root/Podcasts/$PodcastName/Automation.sh
 ### Create Podman Cron Job ###
 crontab -l | { cat; echo "# $PodcastName"; } | crontab -
 crontab -l | { cat; echo "0 0-23 * * * podman run --volume /root/Podcasts/$PodcastName:/mnt/Host --rm docker.io/ryanvanmass/do_upodder:v1 sh /mnt/Host/Automation.sh"; } | crontab -
-crontab -l | { cat; echo "0 0-23 * * * mkdir -p /media/ryan /PodcastSync/$PodcastName && mv /root/Podcasts/$PodcastName/*.mp3* /media/ryan/PodcastSync/$PodcastName"; } | crontab -
+crontab -l | { cat; echo "0 0-23 * * * mkdir -p /media/root/PodcastSync/$PodcastName && mv /root/Podcasts/$PodcastName/*.mp3* /media/root/PodcastSync/$PodcastName"; } | crontab -
 crontab -l | { cat; echo " "; } | crontab -

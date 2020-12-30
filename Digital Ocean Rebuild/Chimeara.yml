@@ -60,6 +60,12 @@
           hour: "23"
           minute: "50"
           job: "podman rm --all"
+      - name: Start and Enable crond service
+        systemd:
+          name: crond
+          state: started
+          enabled: yes
+          daemon_reload: yes
 
   - name: Create NFS mount point
     hosts:
