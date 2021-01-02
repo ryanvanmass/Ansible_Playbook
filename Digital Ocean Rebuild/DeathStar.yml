@@ -16,6 +16,10 @@
         prompt: What is the Network address for the NFS Share?
         private: no
     tasks:
+      - name: Install NFS-Utils
+        dnf:
+          name: nfs-utils
+          state: latest
       - name: Create NFS Share Mount Point
         file:
           path: /media/PodcastSync
@@ -28,6 +32,7 @@
           name: nfs-server
           state: restarted
           daemon_reload: yes
+          enabled: yes
       - name: Allow NFS through Firewall
         firewalld:
           service: nfs

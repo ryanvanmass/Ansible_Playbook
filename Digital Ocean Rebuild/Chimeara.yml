@@ -74,6 +74,10 @@
         prompt: What is the IP address of the NFS Share?
         private: no
     tasks:
+      - name: Install NFS-Utils
+        dnf:
+          name: nfs-utils
+          state: latest
       - name: Create Mount Point Directory
         file:
           path: /media/root/PodcastSync/
