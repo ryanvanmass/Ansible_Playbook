@@ -28,7 +28,7 @@
           state: directory
       - name: Copy AddPodcast.sh to server
         copy:
-          src: /root/Playbooks/Digital Ocean Rebuild/AddPodcast.sh
+          src: /root/Playbooks/Digital Ocean Rebuild/Chimeara/AddPodcast.sh
           dest: /root/Podcasts/
       - name: Create the template folder
         file:
@@ -36,36 +36,34 @@
           state: directory
       - name: Copy Template sql database file to server
         copy:
-          src: /root/Playbooks/Digital Ocean Rebuild/Upodder Template/seen.sqlite
+          src: /root/Playbooks/Digital Ocean Rebuild/Chimeara/Upodder Template/seen.sqlite
           dest: /root/Podcasts/.Template
       - name: Copy Template Subcriptions file to server
         copy:
-          src: /root/Playbooks/Digital Ocean Rebuild/Upodder Template/subscriptions
+          src: /root/Playbooks/Digital Ocean Rebuild/Chimeara/Upodder Template/subscriptions
           dest: /root/Podcasts/.Template
       - name: Set SELinux Policy
         selinux:
           policy: targeted
           state: permissive
 
-  - name: Crontab Setup
+  - name: Podman Cleanup Service Setup
     hosts:
     tasks:
-      - name: Install Cronie
-        dnf:
-          name: cronie
-          state: latest
-      - name: Container Cleanup
-        cron:
-          name: Container Cleanup
-          hour: "23"
-          minute: "50"
-          job: "podman rm --all"
-      - name: Start and Enable crond service
+      - name: Copy Service Files to Destination Server
+        copy: 
+          src: /root/Playbooks/Digital Ocean Rebuild/Chimeara/Systemd Timer/Podman_Cleanup.service
+          dest: /etc/systemd/system
+      - name: Copy Timer Files to Destination Server
+        copy: 
+          src: /root/Playbooks/Digital Ocean Rebuild/Chimeara/Systemd Timer/Podman_Cleanup.timer
+          dest: /etc/systemd/system
+      - name: Start The Timer
         systemd:
-          name: crond
-          state: started
-          enabled: yes
+          name: Podman_Cleanup.timer
+          state: restarted
           daemon_reload: yes
+          enabled: yes
 
   - name: Create NFS mount point
     hosts:
