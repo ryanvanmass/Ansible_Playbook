@@ -9,6 +9,11 @@
           url: https://raw.githubusercontent.com/pi-hole/pi-hole/master/automated%20install/basic-install.sh 
           dest: /root/
     
+    - name: Set SELinux Policy
+      selinux:
+        policy: targeted
+        state: permissive
+    
   - name: Configure NFS
     hosts: localhost
     vars_prompt:
