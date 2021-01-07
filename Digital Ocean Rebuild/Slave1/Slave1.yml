@@ -1,0 +1,62 @@
+---
+  - name: Install Required Packages
+    hosts: 
+    tasks:
+      - name: Syncthing
+        dnf:
+          name: syncthing
+          state: latest
+      - name: NFS-Utils
+        dnf:
+          name: nfs-utils
+          state: latest
+      - name: OpenVPN
+        dnf:
+          name: openvpn
+          state: latest
+
+  - name: Create VPN NFS Shares
+    hosts:
+    tasks:
+      - name: Header
+        shell: echo "# VPN Shares" >> /etc/exports
+      - name: Olympus
+        shell: echo "/mnt/NetworkShares/Olympus 10.8.0.0/24(rw,sync,no_root_squash)" >> /etc/exports
+      - name: Hades
+        shell: echo "/mnt/NetworkShares/Hades 10.8.0.0/24(rw,sync,no_root_squash)" >> /etc/exports
+      - name: Labyrinth
+        shell: echo "/mnt/NetworkShares/Labyrinth 10.8.0.0/24(rw,sync,no_root_squash)" >> /etc/exports
+      - name: Restart NFS Service
+        systemd:
+          name: nfs-server
+          state: restarted
+          daemon_reload: yes
+          enabled: yes
+      - name: Allow NFS through Firewall
+        firewalld:
+          service: nfs
+          permanent: yes
+          state: enabled
+          immediate: yes
+
+  - name: Create Local NFS Shares
+    hosts:
+    vars_prompt:
+      - name: NFS_Network
+        prompt: What is the Network address for the Local NFS Share?
+        private: no
+    tasks:
+      - name: Header
+        shell: echo "# Local Shares" >> /etc/exports
+      - name: Olympus
+        shell: echo "/mnt/NetworkShares/Olympus {{NFS_Network}}(rw,sync,no_root_squash)" >> /etc/exports
+      - name: Hades
+        shell: echo "/mnt/NetworkShares/Hades {{NFS_Network}}(rw,sync,no_root_squash)" >> /etc/exports
+      - name: Labyrinth
+        shell: echo "/mnt/NetworkShares/Labyrinth {{NFS_Network}}(rw,sync,no_root_squash)" >> /etc/exports
+      - name: Restart NFS Service
+        systemd:
+          name: nfs-server
+          state: restarted
+          daemon_reload: yes
+          enabled: yes
