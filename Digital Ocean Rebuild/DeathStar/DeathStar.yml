@@ -44,3 +44,15 @@
           permanent: yes
           state: enabled
           immediate: yes
+  
+  - name: Set up Systemd Timers
+    hosts: localhost
+    tasks:
+      - name: Podcast_Sync Service
+        copy:
+          src: /root/Playbooks/Digital Ocean Rebuild/DeathStar/Systemd Timer/Podcast_Sync.service
+          dest: /etc/systemd/system
+      - name: Podcast_Sync Timer
+        copy: 
+          src: /root/Playbooks/Digital Ocean Rebuild/DeathStar/Systemd Timer/Podcast_Sync.timer
+          dest: /etc/systemd/system

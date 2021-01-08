@@ -1,0 +1,9 @@
+[Unit]
+Description=Podcast_Sync
+
+[Timer]
+OnCalendar=00/1:50
+Persistent=true
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,7 @@
+[Unit]
+Description=Podcast_Sync
+
+[Service]
+Type=oneshot
+ExecStart=rsync -ruPh /media/PodcastSync/ root@10.8.0.0:/mnt/NetworkShares/Hades/Podcast/
+WorkingDirectory=/
