@@ -19,22 +19,6 @@
           name: rclone
           state: latest
 
-  - name: Configure Cockpit
-    hosts:
-    tasks:
-      - name: Enable and start Cockpit.Socket
-        systemd:
-          name: cockpit.socket
-          state: restarted
-          daemon_reload: yes
-          immediate: yes
-      - name: Allow the Cockpit service through firewalld
-        firewalld:
-          service: cockpit
-          permanent: yes
-          state: enabled
-          immediate: yes
-
   - name: Create VPN NFS Shares
     hosts:
     tasks:
@@ -97,11 +81,12 @@
             (.*)Storage>(.*): "23"
             (.*)client_id>(.*): ""
             (.*)client_secret>(.*): ""
-            (.*)y/n>(.*): "n"
-            (.*)y/n>(.*): "y"
+            (.*)y/n>(.*): 
+              - "n"
+              - "y"
+              - "y"
             (.*)result>(.*): "{{Rclone_Key}}"
             (.*)Your choice>(.*): "1"
             (.*)Chose drive to use:>(.*): "0"
-            (.*)y/n>(.*): "y"
             (.*)y/e/d>(.*): "y"
             (.*)e/n/d/r/c/s/q>(.*): "q"
