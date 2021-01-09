@@ -91,17 +91,17 @@
       - name: Run Rclone Setup for Onedrive
         expect:
           command: rclone config
-            responses:
-              (.*)n/s/q>(.*): "n"
-              (.*)name>(.*): "Slave1"
-              (.*)Storage>(.*): "23"
-              (.*)client_id>(.*): ""
-              (.*)client_secret>(.*): ""
-              (.*)Edit advanced config? (y/n)(.*): "n"
-              (.*)Use auto config?(.*): "n"
-              (.*)result>(.*): "{{Rclone_Key}}"
-              (.*)Your choice>(.*): "1"
-              (.*)Chose drive to use:>(.*): "0"
-              (.*)Is that okay?(.*): "y"
-              (.*)y/e/d>(.*): "y"
-              (.*)e/n/d/r/c/s/q>(.*): "q"
+          responses:
+            (.*)n/s/q>(.*): "n"
+            (.*)name>(.*): "Slave1"
+            (.*)Storage>(.*): "23"
+            (.*)client_id>(.*): ""
+            (.*)client_secret>(.*): ""
+            (.*)y/n>(.*): "n"
+            (.*)y/n>(.*): "y"
+            (.*)result>(.*): "{{Rclone_Key}}"
+            (.*)Your choice>(.*): "1"
+            (.*)Chose drive to use:>(.*): "0"
+            (.*)y/n>(.*): "y"
+            (.*)y/e/d>(.*): "y"
+            (.*)e/n/d/r/c/s/q>(.*): "q"
