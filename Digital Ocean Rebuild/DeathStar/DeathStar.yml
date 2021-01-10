@@ -8,11 +8,11 @@
         get_url:
           url: https://raw.githubusercontent.com/pi-hole/pi-hole/master/automated%20install/basic-install.sh 
           dest: /root/
-    
-    - name: Set SELinux Policy
-      selinux:
-        policy: targeted
-        state: permissive
+     
+      - name: Set SELinux Policy
+        selinux:
+          policy: targeted
+          state: permissive
     
   - name: Configure NFS
     hosts: localhost
@@ -68,3 +68,5 @@
         user:
           user: root
           shell: /bin/fish
+      - name: Remove Welcome Message Banner
+        shell: echo "#Remove Fish Welcome Message" >> ~/.config/fish/config.fish && echo "function fish_greeting" >> ~/.config/fish/config.fish && echo "end" >> ~/.config/fish/config.fish
