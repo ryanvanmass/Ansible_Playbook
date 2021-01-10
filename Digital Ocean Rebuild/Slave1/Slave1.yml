@@ -109,24 +109,42 @@
           daemon_reload: yes
           enabled: yes
 
-    - name: Set up Cloud Backup
-      hosts:
+  - name: Set up Cloud Backup
+    hosts:
+    tasks:
+    - name: Copying Cloud Backup Service
+      copy:
+        src: /root/Playbooks/Digital Ocean Rebuild/Slave1/Systemd Timer/Cloud_Backup.service
+        dest: /etc/systemd/system
+    - name: Copying Cloud Backup Timer
+      copy:
+        src: /root/Playbooks/Digital Ocean Rebuild/Slave1/Systemd Timer/Cloud_Backup.timer
+        dest: /etc/systemd/system
+    - name: Create Log Directory
+      file:
+        path: /var/log/Cloud_Backup
+        state: directory
+    - name: Starting Timer
+      systemd:
+        name: Cloud_Backup.timer
+        state: restarted
+        daemon_reload: yes
+        enabled: yes
+
+  - name: Configuring Default Shell
+      hosts: localhost
       tasks:
-      - name: Copying Cloud Backup Service
-        copy:
-          src: /root/Playbooks/Digital Ocean Rebuild/Slave1/Systemd Timer/Cloud_Backup.service
-          dest: /etc/systemd/system
-      - name: Copying Cloud Backup Timer
-        copy:
-          src: /root/Playbooks/Digital Ocean Rebuild/Slave1/Systemd Timer/Cloud_Backup.timer
-          dest: /etc/systemd/system
-      - name: Create Log Directory
-        file:
-          path: /var/log/Cloud_Backup
-          state: directory
-      - name: Starting Timer
-        systemd:
-          name: Cloud_Backup.timer
-          state: restarted
-          daemon_reload: yes
-          enabled: yes
+        - name: Download Fish
+          dnf:
+            name: fish
+            state: latest
+        - name: Set Default Shell
+          user:
+            user: root
+            shell: /bin/fish
+        - name: Create Config Directory
+          file:
+            path: ~/.config/fish
+            state: directory
+        - name: Create Config File
+          shell: echo "#Remove Fish Welcome Message" >> ~/.config/fish/config.fish && echo "function fish_greeting" >> ~/.config/fish/config.fish && echo "end" >> ~/.config/fish/config.fish

@@ -68,8 +68,9 @@
         user:
           user: root
           shell: /bin/fish
-      - name: Remove Welcome Message Banner
+      - name: Create Config Directory
         file:
           path: ~/.config/fish
           state: directory
+      - name: Create Config File
         shell: echo "#Remove Fish Welcome Message" >> ~/.config/fish/config.fish && echo "function fish_greeting" >> ~/.config/fish/config.fish && echo "end" >> ~/.config/fish/config.fish

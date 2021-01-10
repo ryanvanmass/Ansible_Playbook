@@ -90,3 +90,20 @@
           dump: 0
           passno: 0
 
+- name: Configuring Default Shell
+    hosts: localhost
+    tasks:
+      - name: Download Fish
+        dnf:
+          name: fish
+          state: latest
+      - name: Set Default Shell
+        user:
+          user: root
+          shell: /bin/fish
+      - name: Create Config Directory
+        file:
+          path: ~/.config/fish
+          state: directory
+      - name: Create Config File
+        shell: echo "#Remove Fish Welcome Message" >> ~/.config/fish/config.fish && echo "function fish_greeting" >> ~/.config/fish/config.fish && echo "end" >> ~/.config/fish/config.fish
