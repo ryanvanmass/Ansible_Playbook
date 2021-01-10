@@ -56,3 +56,15 @@
         copy: 
           src: /root/Playbooks/Digital Ocean Rebuild/DeathStar/Systemd Timer/Podcast_Sync.timer
           dest: /etc/systemd/system
+  
+  - name: Configuring Default Shell
+    hosts: localhost
+    tasks:
+      - name: Download Fish
+        dnf:
+          name: fish
+          state: latest
+      - name: Set Default Shell
+        user:
+          user: root
+          shell: /bin/fish

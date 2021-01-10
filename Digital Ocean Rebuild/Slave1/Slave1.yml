@@ -67,10 +67,6 @@
 
   - name: Rclone Configuration
     hosts:
-    vars_prompt:
-      - name: Rclone_Key
-        prompt: What is the rclone headless configuration key?
-        private: no
     tasks:
       - name: Run Rclone Setup for Onedrive
         expect:
@@ -85,8 +81,52 @@
               - "n"
               - "n"
               - "y"
-            (.*)result>(.*): '{{Rclone_Key}}'
+            (.*)result>(.*): '' #Enter the Rclone API Key Here
             (.*)Your choice>(.*): "1"
             (.*)Chose drive to use:>(.*): "0"
             (.*)y/e/d>(.*): "y"
             (.*)e/n/d/r/c/s/q>(.*): "q"
+
+  - name: Set up Network Share Backup
+    hosts:
+    tasks:
+      - name: Copying Network Share Backup Service
+        copy:
+          src: /root/Playbooks/Digital Ocean Rebuild/Slave1/Systemd Timer/NetworkShare_Backup.service
+          dest: /etc/systemd/system
+      - name: Copying Network Share Backup Timer
+        copy:
+          src: /root/Playbooks/Digital Ocean Rebuild/Slave1/Systemd Timer/NetworkShare_Backup.timer
+          dest: /etc/systemd/system
+      - name: Create Log Directory
+        file:
+          path: /var/log/NetworkShare_Backup
+          state: directory
+      - name: Starting Timer
+        systemd:
+          name: NetworkShare_Backup.timer
+          state: restarted
+          daemon_reload: yes
+          enabled: yes
+
+    - name: Set up Cloud Backup
+      hosts:
+      tasks:
+      - name: Copying Cloud Backup Service
+        copy:
+          src: /root/Playbooks/Digital Ocean Rebuild/Slave1/Systemd Timer/Cloud_Backup.service
+          dest: /etc/systemd/system
+      - name: Copying Cloud Backup Timer
+        copy:
+          src: /root/Playbooks/Digital Ocean Rebuild/Slave1/Systemd Timer/Cloud_Backup.timer
+          dest: /etc/systemd/system
+      - name: Create Log Directory
+        file:
+          path: /var/log/Cloud_Backup
+          state: directory
+      - name: Starting Timer
+        systemd:
+          name: Cloud_Backup.timer
+          state: restarted
+          daemon_reload: yes
+          enabled: yes

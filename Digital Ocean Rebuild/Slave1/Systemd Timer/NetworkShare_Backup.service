@@ -1,0 +1,7 @@
+[Unit]
+Description=NetworkShare_Backup
+
+[Service]
+Type=oneshot
+ExecStart=rsync -ruPh /mnt/NetworkShares/ /mnt/BackUp/NetworkShares/ > /var/log/NetworkShare_Backup/$(date +"%Y-%m-%d").txt
+WorkingDirectory=/
