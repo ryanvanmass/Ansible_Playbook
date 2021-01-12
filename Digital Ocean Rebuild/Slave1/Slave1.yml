@@ -132,7 +132,7 @@
         enabled: yes
 
   - name: Configuring Default Shell
-    hosts: localhost
+    hosts: 
     tasks:
       - name: Download Fish
         dnf:
