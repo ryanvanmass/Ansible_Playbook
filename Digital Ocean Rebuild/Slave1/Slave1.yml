@@ -18,6 +18,10 @@
         dnf:
           name: rclone
           state: latest
+      - name: Smart Monitor Tools
+        dnf:
+          name: smartmontools
+          state: latest
 
   - name: Create VPN NFS Shares
     hosts:
@@ -108,7 +112,12 @@
           state: restarted
           daemon_reload: yes
           enabled: yes
-
+      
+      - name: Set SELinux Policy
+        selinux:
+          policy: targeted
+          state: permissive
+    
   - name: Set up Cloud Backup
     hosts:
     tasks:
