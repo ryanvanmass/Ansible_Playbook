@@ -1,0 +1,67 @@
+---
+  - name: Install required Packages
+    hosts:
+    tasks:
+      - name: Rclone
+        dnf:
+          name: rclone
+          state: latest
+      - name: Snap
+        dnf:
+          name: snapd
+          state: latest
+      - name: cockpit
+        dnf:
+          name: cockpit
+          state: latest
+      - name: NextCloud
+        snap:
+          name: nextcloud
+
+  - name: Rclone Configuration
+    hosts:
+    tasks:
+      - name: Run Rclone Setup for Onedrive
+        expect:
+          command: rclone config
+          responses:
+            (.*)n/s/q>(.*): "n"
+            (.*)name>(.*): "Slave1"
+            (.*)Storage>(.*): "23"
+            (.*)client_id>(.*): ""
+            (.*)client_secret>(.*): ""
+            (.*)y/n>(.*): 
+              - "n"
+              - "n"
+              - "y"
+            (.*)result>(.*): '' #Enter the Rclone API Key Here
+            (.*)Your choice>(.*): "1"
+            (.*)Chose drive to use:>(.*): "0"
+            (.*)y/e/d>(.*): "y"
+            (.*)e/n/d/r/c/s/q>(.*): "q"
+
+  - name: NextCloud Configuration
+    hosts:
+    vars_prompt:
+      - name: NextCloud_Username
+        prompt: Please Enter a username for NextCloud
+        private: no
+      - name: NextCloud_Password
+        prompt: Please Enter a Password for Nextcloud
+        private: yes
+        confirm: yes
+      - name: NextCloud_LocalIP
+        prompt: Please enter the Local IP address for the nextcloud server
+        private: no
+      - name: NextCloud_VPNIP
+        prompt: Please enter the VPN IP of the Nextcloud server
+        private: no
+    tasks:
+      - name: Create First User
+        shell: nextcloud.manual-install {{NextCloud_Username}} {{NextCloud_Password}}
+      - name: set NextCloud Local IP Address
+        shell: nextcloud.occ config:system:set trusted_domains 1 --value={{NextCloud_LocalIP}}
+      - name: Set NextCloud VPN IP
+        shell: nextcloud.occ config:system:set trusted_domains 2 --value={{NextCloud_VPNIP}}
+      - name: Give NextCloud access to external storage
+        shell: snap connect nextcloud:removable-media
