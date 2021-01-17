@@ -17,4 +17,8 @@
           repo: git@github.com:ryanvanmass/WifiPineapple.git
           dest: /mnt/NetworkShares/Olympus/Scripts/WifiPineapple
           update: yes
-          
+      - name: Website
+        git:
+          repo: git@github.com:ryanvanmass/Website.git
+          dest: /mnt/NetworkShares/Olympus/Website
+          update: yes

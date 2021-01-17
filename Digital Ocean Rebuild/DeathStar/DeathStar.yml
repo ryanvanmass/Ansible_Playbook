@@ -56,6 +56,13 @@
         copy: 
           src: /root/Playbooks/Digital Ocean Rebuild/DeathStar/Systemd Timer/Podcast_Sync.timer
           dest: /etc/systemd/system
+      - name: GitUpdater Service
+        copy: 
+          src: /root/Playbooks/Digital Ocean Rebuild/DeathStar/Systemd Timer/GitUpdater.service
+          dest: /etc/systemd/system
+      - name: GitUpdater Timer
+        src: /root/Playbooks/Digital Ocean Rebuild/DeathStar/Systemd Timer/GitUpdater.timer
+        dest: /etc/systemd/system
   
   - name: Configuring Default Shell
     hosts: localhost
