@@ -90,8 +90,8 @@
           dump: 0
           passno: 0
 
-- name: Configuring Default Shell
-    hosts: localhost
+  - name: Configuring Default Shell
+    hosts: 
     tasks:
       - name: Download Fish
         dnf:
