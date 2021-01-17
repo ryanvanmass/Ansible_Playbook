@@ -22,6 +22,10 @@
         dnf:
           name: smartmontools
           state: latest
+      - name:
+        dnf:
+          name: git
+          state: latest
 
   - name: Create VPN NFS Shares
     hosts:

@@ -1,6 +1,6 @@
 ---
   - name: Update Github Repos
-    hosts: Servers
+    hosts: Slave1
     tasks:
       - name: Ansible Playbooks
         git:
