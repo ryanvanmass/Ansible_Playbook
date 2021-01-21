@@ -26,6 +26,10 @@
         dnf:
           name: cockpit
           state: latest
+      - name: Audacity
+        dnf:
+          name: audacity
+          state: latest
 
   - name: Download and Install RPMs
     hosts:  
@@ -115,3 +119,36 @@
       - name: Minecraft
         snap:
           name: mc-installer
+
+  - name: Configuring RPM Fusion and Installing Packages
+    hosts:
+    tasks:
+      - name: Add Repository
+        dnf:
+          name:
+            - 'https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm'
+            - 'https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm'
+          state: present
+      - name: Install OBS
+        dnf:
+          name: obs-studio
+          state: latest
+      - name: Install Kdenlive
+        dnf:
+          name: kdenlive
+          state: latest
+
+  - name: Basic System Configuration
+    hosts:
+    tasks:
+      - name: Setting Default Shell to fish
+        user:
+          user: ryan
+          shell: /bin/fish
+      - name: Configuring Fish
+        shell: echo "#Remove Fish Welcome Message" >> ~/.config/fish/config.fish && echo "function fish_greeting" >> ~/.config/fish/config.fish && echo "end" >> ~/.config/fish/config.fish
+      - name: Generate SSH Keys
+        user:
+          generate_ssh_key: yes
+          ssh_key_bits: 2048
+          ssh_key_file: .ssh/id_rsa
