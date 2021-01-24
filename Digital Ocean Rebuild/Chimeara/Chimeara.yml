@@ -1,6 +1,6 @@
 ---
   - name: Download and Configure Podman
-    hosts:
+    hosts: Chimeara
     tasks:
       - name: Podman
         dnf:
@@ -16,7 +16,7 @@
           state: latest
   
   - name: upodder setup
-    hosts:
+    hosts: Chimeara
     tasks: 
       - name: Download my upodder docker image
         podman_image:
@@ -48,7 +48,7 @@
           state: permissive
 
   - name: Podman Cleanup Service Setup
-    hosts:
+    hosts: Chimeara
     tasks:
       - name: Copy Service Files to Destination Server
         copy: 
@@ -66,7 +66,7 @@
           enabled: yes
 
   - name: Create NFS mount point
-    hosts:
+    hosts: Chimeara
     vars_prompt:
       - name: NFS_IP
         prompt: What is the IP address of the NFS Share?
@@ -91,7 +91,7 @@
           passno: 0
 
   - name: Configuring Default Shell
-    hosts: 
+    hosts: Chimeara
     tasks:
       - name: Download Fish
         dnf:
