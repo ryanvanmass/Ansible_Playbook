@@ -1,0 +1,16 @@
+---
+  - name: Digital Ocean Updates
+    hosts: DO_Servers
+    tasks:
+      - name: Droplet Updates
+        dnf:
+          name: "*"
+          state: latest
+      
+  - name: Local Updates
+    hosts: Local_Servers
+    tasks:
+      - name: Pi Updates
+        dnf:
+          name: "*"
+          state: latest
