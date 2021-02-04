@@ -1,0 +1,40 @@
+---
+  - name: Install Basic Packages
+    hosts:
+    tasks:
+      - name: Htop
+        apt:
+          name: htop
+          state: latest
+      - name: Terminator
+        apt:
+          name: terminator
+          state: latest
+      - name: Fish
+        apt:
+          name: fish
+          state: latest
+
+  - name: Download and Install Debs
+    - name: Download Google Chrome
+      get_url:
+        url:
+        dest: /home/$USER/Downloads
+    - name: Install Google Chrome
+      apt:
+        deb:
+
+
+  - name: Set up Admin Account
+    hosts:
+    vars_prompt:
+      - name: User_Password
+        prompt: Please enter a Password for the Admin account
+        confirm: yes
+        private: yes
+    tasks:
+      user:
+        user: ryan
+        shell: /bin/fish
+        group: admin
+        password: {{User_Password}}
