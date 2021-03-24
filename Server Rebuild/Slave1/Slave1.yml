@@ -1,0 +1,179 @@
+---
+  - name: Install Required Packages
+    hosts: Slave1
+    tasks:
+      - name: NFS-Utils
+        dnf:
+          name: nfs-utils
+          state: latest
+      - name: OpenVPN
+        dnf:
+          name: openvpn
+          state: latest
+      - name: Cockpit
+        dnf:
+          name: cockpit
+          state: latest
+      - name: Rclone
+        dnf:
+          name: rclone
+          state: latest
+      - name: Smart Monitor Tools
+        dnf:
+          name: smartmontools
+          state: latest
+      - name: Git
+        dnf:
+          name: git
+          state: latest
+      - name: Hugo
+        dnf:
+          name: hugo
+          state: latest
+
+  - name: Create VPN NFS Shares
+    hosts: Slave1
+    tasks:
+      - name: Header
+        shell: echo "# VPN Shares" >> /etc/exports
+      - name: Olympus
+        shell: echo "/mnt/NetworkShares/Olympus 10.8.0.0/24(rw,sync,no_root_squash)" >> /etc/exports
+      - name: Hades
+        shell: echo "/mnt/NetworkShares/Hades 10.8.0.0/24(rw,sync,no_root_squash)" >> /etc/exports
+      - name: Labyrinth
+        shell: echo "/mnt/NetworkShares/Labyrinth 10.8.0.0/24(rw,sync,no_root_squash)" >> /etc/exports
+      - name: Restart NFS Service
+        systemd:
+          name: nfs-server
+          state: restarted
+          daemon_reload: yes
+          enabled: yes
+      - name: Allow NFS through Firewall
+        firewalld:
+          service: nfs
+          permanent: yes
+          state: enabled
+          immediate: yes
+
+  - name: Create Local NFS Shares
+    hosts: Slave1
+    vars_prompt:
+      - name: NFS_Network
+        prompt: What is the Network address for the Local NFS Share?
+        private: no
+    tasks:
+      - name: Header
+        shell: echo "# Local Shares" >> /etc/exports
+      - name: Olympus
+        shell: echo "/mnt/NetworkShares/Olympus {{NFS_Network}}(rw,sync,no_root_squash)" >> /etc/exports
+      - name: Hades
+        shell: echo "/mnt/NetworkShares/Hades {{NFS_Network}}(rw,sync,no_root_squash)" >> /etc/exports
+      - name: Labyrinth
+        shell: echo "/mnt/NetworkShares/Labyrinth {{NFS_Network}}(rw,sync,no_root_squash)" >> /etc/exports
+      - name: Restart NFS Service
+        systemd:
+          name: nfs-server
+          state: restarted
+          daemon_reload: yes
+          enabled: yes
+
+#Rclone is used to do Cloud Backups
+  - name: Rclone Configuration
+    hosts: Slave1
+    tasks:
+      - name: Run Rclone Setup for Onedrive
+        expect:
+          command: rclone config
+          responses:
+            (.*)n/s/q>(.*): "n"
+            (.*)name>(.*): "Slave1"
+            (.*)Storage>(.*): "23"
+            (.*)client_id>(.*): ""
+            (.*)client_secret>(.*): ""
+            (.*)y/n>(.*): 
+              - "n"
+              - "n"
+              - "y"
+            (.*)result>(.*): '' #Enter the Rclone API Key Here
+            (.*)Your choice>(.*): "1"
+            (.*)Chose drive to use:>(.*): "0"
+            (.*)y/e/d>(.*): "y"
+            (.*)e/n/d/r/c/s/q>(.*): "q"
+
+  - name: Set up Network Share Backup
+    hosts: Slave1
+    tasks:
+      - name: Copying Network Share Backup Service
+        copy:
+          src: /root/Playbooks/Server Rebuild/Slave1/Systemd Timer/NetworkShare_Backup.service
+          dest: /etc/systemd/system
+      - name: Copying Network Share Backup Timer
+        copy:
+          src: /root/Playbooks/Server Rebuild/Slave1/Systemd Timer/NetworkShare_Backup.timer
+          dest: /etc/systemd/system
+      - name: Create Log Directory
+        file:
+          path: /var/log/NetworkShare_Backup
+          state: directory
+      - name: Starting Timer
+        systemd:
+          name: NetworkShare_Backup.timer
+          state: restarted
+          daemon_reload: yes
+          enabled: yes
+      
+      - name: Set SELinux Policy
+        selinux:
+          policy: targeted
+          state: permissive
+    
+  - name: Set up Cloud Backup
+    hosts: Slave1
+    tasks:
+    - name: Copying Cloud Backup Service
+      copy:
+        src: /root/Playbooks/Server Rebuild/Slave1/Systemd Timer/Cloud_Backup.service
+        dest: /etc/systemd/system
+    - name: Copying Cloud Backup Timer
+      copy:
+        src: /root/Playbooks/Server Rebuild/Slave1/Systemd Timer/Cloud_Backup.timer
+        dest: /etc/systemd/system
+    - name: Create Log Directory
+      file:
+        path: /var/log/Cloud_Backup
+        state: directory
+    - name: Starting Timer
+      systemd:
+        name: Cloud_Backup.timer
+        state: restarted
+        daemon_reload: yes
+        enabled: yes
+
+  - name: Configure Hugo
+    hosts: Slave1
+    tasks:
+      - name: Allow Port 1313 through the Firewall
+        firewalld:
+          port: 1313/tcp
+          permanent: true
+          state: enabled
+          immediate: yes
+      - name: 
+
+  - name: Configuring Default Shell
+    hosts: Slave1
+    tasks:
+      - name: Download Fish
+        dnf:
+          name: fish
+          state: latest
+      - name: Set Default Shell
+        user:
+          user: root
+          shell: /bin/fish
+      - name: Create Config Directory
+        file:
+          path: ~/.config/fish
+          state: directory
+      - name: Create Config File
+        shell: echo "#Remove Fish Welcome Message" >> ~/.config/fish/config.fish && echo "function fish_greeting" >> ~/.config/fish/config.fish && echo "end" >> ~/.config/fish/config.fish

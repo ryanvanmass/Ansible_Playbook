@@ -1,0 +1,40 @@
+---
+  - name: Install required Packages
+    hosts: Ghost
+    tasks:
+      - name: git
+        dnf:
+          name: Git
+          state: latest
+      - name: Hugo
+        dnf:
+          name: hugo
+          state: latest
+      - name: Htop
+        dnf:
+          name: Htop
+          state: latest
+      - name: NFS Utils
+        dnf:
+          name: nfs-utils
+          state: latest
+      - name: Cockpit
+        dnf:
+          name: cockpit
+          state: latest
+      - name: OpenVPN
+        dnf:
+          name: openvpn
+          state: latest
+        
+  - name: Install and Configure VS Code Server
+    hosts: Ghost
+    tasks:
+      - name: Install VS Code Server
+        shell: curl -fsSL https://code-server.dev/install.sh | sh
+      - name: Allow Port 8080 through firewall
+        firewalld:
+          port: 8080/tcp
+          permanent: true
+          statue: enabled
+          immediate: yes

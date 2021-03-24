@@ -1,0 +1,7 @@
+[Unit]
+Description=Cloud_Backup
+
+[Service]
+Type=oneshot
+ExecStart=sh -c 'rclone sync -vv --onedrive-chunk-size=5120 /mnt/NetworkShares/Hades/Pictures/ Slave1:Slave1/Pichures/ --log-file /var/log/Cloud_Backup/$(date +"%%Y-%%m-%%d").txt'
+WorkingDirectory=/
