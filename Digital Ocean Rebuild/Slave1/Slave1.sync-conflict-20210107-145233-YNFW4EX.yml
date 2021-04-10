@@ -1,0 +1,17 @@
+---
+  - name: Install Required Packages
+    hosts: 
+    tasks:
+      - name: Syncthing
+        dnf:
+          name: syncthing
+          state: latest
+      - name: NFS-Utils
+        dnf:
+          name: nfs-utils
+          state: latest
+      - name: OpenVPN
+        dnf:
+          name: openvpn
+          state: latest
+          

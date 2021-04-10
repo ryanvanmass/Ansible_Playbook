@@ -6,10 +6,28 @@
         dnf:
           name: Git
           state: latest
+<<<<<<< HEAD
+=======
+      - name: Hugo
+        dnf:
+          name: hugo
+          state: latest
+>>>>>>> b835a087ab931d2d1d29f08a8cc72e182499d3d1
       - name: Htop
         dnf:
           name: Htop
           state: latest
+<<<<<<< HEAD
+=======
+      - name: NFS Utils
+        dnf:
+          name: nfs-utils
+          state: latest
+      - name: Cockpit
+        dnf:
+          name: cockpit
+          state: latest
+>>>>>>> b835a087ab931d2d1d29f08a8cc72e182499d3d1
       - name: OpenVPN
         dnf:
           name: openvpn
