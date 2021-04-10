@@ -1,0 +1,77 @@
+---
+  - name: Downloading Scripts for Setting up OpenVPN and PiHole
+    hosts: localhost
+    tasks:
+      - name: OpenVPN
+        shell: wget https://git.io/vpn -O /root/openvpn-install.sh && chmod 755 /root/openvpn-install.sh
+      - name: PiHole
+        get_url:
+          url: https://raw.githubusercontent.com/pi-hole/pi-hole/master/automated%20install/basic-install.sh 
+          dest: /root/
+      
+      - name: Set SELinux Policy
+        selinux:
+          policy: targeted
+          state: permissive
+
+#This NFS Share is used to acted as a bridge between my cloud and Local infrastructure
+  - name: Configure NFS
+    hosts: localhost
+    vars_prompt:
+      - name: NFS_Network
+        prompt: What is the Network address for the NFS Share?
+        private: no
+    tasks:
+      - name: Install NFS-Utils
+        dnf:
+          name: nfs-utils
+          state: latest
+      - name: Create NFS Share Mount Point
+        file:
+          path: /media/PodcastSync
+          state: directory
+          mode: 0777
+      - name: Create NFS Export Entry
+        shell: echo "/media/PodcastSync {{NFS_Network}}(rw,sync,no_root_squash)" >> /etc/exports
+      - name: Restart NFS Service
+        systemd:
+          name: nfs-server
+          state: restarted
+          daemon_reload: yes
+          enabled: yes
+      - name: Allow NFS through Firewall
+        firewalld:
+          service: nfs
+          permanent: yes
+          state: enabled
+          immediate: yes
+  
+  - name: Set up Systemd Timers
+    hosts: localhost
+    tasks:
+      - name: Podcast_Sync Service
+        copy:
+          src: /root/Playbooks/Server Rebuild/DeathStar/Systemd Timer/Podcast_Sync.service
+          dest: /etc/systemd/system
+      - name: Podcast_Sync Timer
+        copy: 
+          src: /root/Playbooks/Server Rebuild/DeathStar/Systemd Timer/Podcast_Sync.timer
+          dest: /etc/systemd/system
+  
+  - name: Configuring Default Shell
+    hosts: localhost
+    tasks:
+      - name: Download Fish
+        dnf:
+          name: fish
+          state: latest
+      - name: Set Default Shell
+        user:
+          user: root
+          shell: /bin/fish
+      - name: Create Config Directory
+        file:
+          path: ~/.config/fish
+          state: directory
+      - name: Create Config File
+        shell: echo "#Remove Fish Welcome Message" >> ~/.config/fish/config.fish && echo "function fish_greeting" >> ~/.config/fish/config.fish && echo "end" >> ~/.config/fish/config.fish

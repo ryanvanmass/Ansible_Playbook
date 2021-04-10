@@ -1,0 +1,110 @@
+---
+  - name: Download and Configure Podman
+    hosts: Chimeara
+    tasks:
+      - name: Podman
+        dnf:
+          name: podman
+          state: latest
+      - name: Cockpit
+        dnf:
+          name: cockpit
+          state: latest
+      - name: Cockpit-Podman
+        dnf:
+          name: cockpit-podman
+          state: latest
+  
+  - name: upodder setup
+    hosts: Chimeara
+    tasks: 
+      - name: Download my upodder docker image
+        podman_image:
+          name: ryanvanmass/do_upodder
+          tag: v1
+      - name: Create Podcasts Directory
+        file: 
+          path: /root/Podcasts
+          state: directory
+      - name: Copy AddPodcast.sh to server
+        copy:
+          src: /root/Playbooks/Server Rebuild/Chimeara/AddPodcast.sh
+          dest: /root/Podcasts/
+      - name: Create the template folder
+        file:
+          path: /root/Podcasts/.Template
+          state: directory
+      - name: Copy Template sql database file to server
+        copy:
+          src: /root/Playbooks/Server Rebuild/Chimeara/Upodder Template/seen.sqlite
+          dest: /root/Podcasts/.Template
+      - name: Copy Template Subcriptions file to server
+        copy:
+          src: /root/Playbooks/Server Rebuild/Chimeara/Upodder Template/subscriptions
+          dest: /root/Podcasts/.Template
+      - name: Set SELinux Policy
+        selinux:
+          policy: targeted
+          state: permissive
+
+  - name: Podman Cleanup Service Setup
+    hosts: Chimeara
+    tasks:
+      - name: Copy Service Files to Destination Server
+        copy: 
+          src: /root/Playbooks/Server Rebuild/Chimeara/Systemd Timer/Podman_Cleanup.service
+          dest: /etc/systemd/system
+      - name: Copy Timer Files to Destination Server
+        copy: 
+          src: /root/Playbooks/Server Rebuild/Chimeara/Systemd Timer/Podman_Cleanup.timer
+          dest: /etc/systemd/system
+      - name: Start The Timer
+        systemd:
+          name: Podman_Cleanup.timer
+          state: restarted
+          daemon_reload: yes
+          enabled: yes
+
+#This is to connect to the NFS Share on the DeathStar to send files to local network
+  - name: Create NFS mount point
+    hosts: Chimeara
+    vars_prompt:
+      - name: NFS_IP
+        prompt: What is the IP address of the NFS Share?
+        private: no
+    tasks:
+      - name: Install NFS-Utils
+        dnf:
+          name: nfs-utils
+          state: latest
+      - name: Create Mount Point Directory
+        file:
+          path: /media/root/PodcastSync/
+          state: directory
+      - name: create Fstab Entry
+        mount:
+          state: "mounted"
+          fstype: "nfs"
+          name: /media/root/PodcastSync
+          src: "{{NFS_IP}}:/media/PodcastSync"
+          opts: defaults
+          dump: 0
+          passno: 0
+
+  - name: Configuring Default Shell
+    hosts: Chimeara
+    tasks:
+      - name: Download Fish
+        dnf:
+          name: fish
+          state: latest
+      - name: Set Default Shell
+        user:
+          user: root
+          shell: /bin/fish
+      - name: Create Config Directory
+        file:
+          path: ~/.config/fish
+          state: directory
+      - name: Create Config File
+        shell: echo "#Remove Fish Welcome Message" >> ~/.config/fish/config.fish && echo "function fish_greeting" >> ~/.config/fish/config.fish && echo "end" >> ~/.config/fish/config.fish
