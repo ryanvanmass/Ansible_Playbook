@@ -6,14 +6,14 @@
         dnf:
           name: podman
           state: latest
-        - name: Cockpit
-          dnf:
-            name: cockpit
-            state: latest
-        - name: Cockpit-Podman
-          dnf:
-            name: cockpit-podman
-            state: latest
+      - name: Cockpit
+        dnf:
+          name: cockpit
+          state: latest
+      - name: Cockpit-Podman
+        dnf:
+          name: cockpit-podman
+          state: latest
   
   - name: Youtube-DL Setup
     hosts: Fulminatrix
@@ -57,7 +57,7 @@
 
 #This is to connect to the NFS Share on the DeathStar to send files to local network
   - name: Create NFS mount point
-    hosts: Chimeara
+    hosts: Fulminatrix
     vars_prompt:
       - name: NFS_IP
         prompt: What is the IP address of the NFS Share?
@@ -75,8 +75,8 @@
         mount:
           state: "mounted"
           fstype: "nfs"
-          name: /media/root/VideoSyncz
-          src: "{{NFS_IP}}:/media/VideoSync"
+          name: /media/root/VideoSync
+          src: "{{NFS_IP}}:/media/PlaylistSync"
           opts: defaults
           dump: 0
           passno: 0

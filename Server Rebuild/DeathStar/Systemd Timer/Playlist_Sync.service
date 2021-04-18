@@ -3,6 +3,6 @@ Description=Playlist_Sync
 
 [Service]
 Type=oneshot
-ExecStart=sh -c 'rsync -ruPh /media/Playlist_Sync/ root@10.8.0.0:/mnt/NetworkShares/Labyrinth/Youtube/'
-ExecStart=sh -c 'rm -rf /media/Playlist_Sync/*'
+ExecStart=sh -c 'rsync -ruPh /media/PlaylistSync/ root@10.8.0.0:/mnt/NetworkShares/Labyrinth/Youtube/'
+ExecStart=sh -c 'rm -rf /media/PlaylistSync/*'
 WorkingDirectory=/

@@ -21,7 +21,7 @@ echo "youtube-dl -f 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/bestvideo+bestaudio' 
 ### Create AutomationP2.sh File ###
 echo "#!/bin/bash" >> /root/Youtube-DL/$PlaylistName/AutomationP2.sh
 echo "mkdir -p /media/root/VideoSync/$PlaylistName" >> /root/Youtube-DL/$PlaylistName/AutomationP2.sh
-echo "mv /root/Youtube-DL/$PlaylistName/*.mp4* /media/root/VideoSync/$PlaylistName" >> /root/Youtube-DL/$PlaylistName/AutomationP2.sh
+echo "mv /root/Youtube-DL/$PlaylistName/Videos/*.mp4* /media/root/VideoSync/$PlaylistName" >> /root/Youtube-DL/$PlaylistName/AutomationP2.sh
 echo "rm -rf /root/Youtube-DL/$PlaylistName/*.mp4*" >> /root/Youtube-DL/$PlaylistName/AutomationP2.sh
 
 ### Create Systemd Service File ###
