@@ -1,5 +1,5 @@
 [Unit]
-Description=Playlist_Sync
+Description=Podcast_Sync
 
 [Timer]
 OnCalendar=00/1:50

@@ -1,0 +1,7 @@
+[Unit]
+Description=Podman_Cleanup
+
+[Service]
+Type=oneshot
+ExecStart=podman rm --all
+WorkingDirectory=/

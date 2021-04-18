@@ -26,13 +26,20 @@
         dnf:
           name: nfs-utils
           state: latest
-      - name: Create NFS Share Mount Point
+      - name: Create Podcast Sync Mount Point
         file:
           path: /media/PodcastSync
           state: directory
           mode: 0777
-      - name: Create NFS Export Entry
+      - name: Create Playlist Sync Mount Point
+        file:
+          path: /media/PlaylistSync
+          state: directory
+          mode: 0777
+      - name: Create NFS Export Entry for Podcast Sync
         shell: echo "/media/PodcastSync {{NFS_Network}}(rw,sync,no_root_squash)" >> /etc/exports
+      - name: Create NFS Export Entry for Playlist Sync
+        shell: echo "/media/PlaylistSync {{NFS_Network}}(rw,sync,no_root_squash)" >> /etc/exports
       - name: Restart NFS Service
         systemd:
           name: nfs-server
@@ -46,7 +53,7 @@
           state: enabled
           immediate: yes
   
-  - name: Set up Systemd Timers
+  - name: Set up Systemd Timers and services
     hosts: localhost
     tasks:
       - name: Podcast_Sync Service
@@ -57,7 +64,14 @@
         copy: 
           src: /root/Playbooks/Server Rebuild/DeathStar/Systemd Timer/Podcast_Sync.timer
           dest: /etc/systemd/system
-  
+      - name: Playlist_Sync Service
+          src: /root/Playbooks/Server Rebuild/DeathStar/Systemd Timer/Playlist_Sync.service
+          dest: /etc/systemd/system
+      - name: Playlist_Sync Timer
+          src: /root/Playbooks/Server Rebuild/DeathStar/Systemd Timer/Playlist_Sync.timer
+          dest: /etc/systemd/system
+
+
   - name: Configuring Default Shell
     hosts: localhost
     tasks:
