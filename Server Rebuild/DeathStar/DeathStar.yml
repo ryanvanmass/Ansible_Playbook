@@ -28,18 +28,11 @@
           state: latest
       - name: Create Podcast Sync Mount Point
         file:
-          path: /media/PodcastSync
-          state: directory
-          mode: 0777
-      - name: Create Playlist Sync Mount Point
-        file:
-          path: /media/PlaylistSync
+          path: /media/FileSync
           state: directory
           mode: 0777
       - name: Create NFS Export Entry for Podcast Sync
-        shell: echo "/media/PodcastSync {{NFS_Network}}(rw,sync,no_root_squash)" >> /etc/exports
-      - name: Create NFS Export Entry for Playlist Sync
-        shell: echo "/media/PlaylistSync {{NFS_Network}}(rw,sync,no_root_squash)" >> /etc/exports
+        shell: echo "/media/FileSync {{NFS_Network}}(rw,sync,no_root_squash)" >> /etc/exports
       - name: Restart NFS Service
         systemd:
           name: nfs-server

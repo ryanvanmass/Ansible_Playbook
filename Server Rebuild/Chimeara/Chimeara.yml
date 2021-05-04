@@ -1,0 +1,61 @@
+---
+  - name: Download Required Github Repos
+    hosts: Chimeara
+    tasks: 
+      - name: Upodder
+        git:
+          repo: https://github.com/ryanvanmass/upodder
+          dest: /root/Upodder
+      - name: Youtube-DL
+        git:
+          repo: https://github.com/ryanvanmass/youtubedl
+          dest: /root/YoutubeDL
+      - name: CloudC2
+        git:
+          repo: https://github.com/ryanvanmass/cloudc2
+          dest: /root/CloudC2
+  
+  - name: Build Docker Images
+    hosts: Chimeara
+    tasks:
+      - name: Upodder
+        shell: docker build -t upodder /root/Upodder
+      - name: Youtube-DL
+        shell: docker build -t youtubedl /root/YoutubeDL
+      - name: CloudC2
+        shell: sh /root/CloudC2/Setup.sh "apt" && docker build -t cloudc2 /root/CloudC2
+  
+  - name: Connect to NFS Share on DeathStar
+    hosts: Chimeara
+    vars_prompt:
+      - name: NFS_IP
+        prompt: What is the IP address of the NFS Share?
+        private: no
+    tasks:
+      - name: Install NFS-Utils
+        apt:
+          name: nfs-common
+          state: latest
+      - name: Create Mount Point Directory
+        file:
+          path: /media/root/FileSync/
+          state: directory
+      - name: create Fstab Entry
+        mount:
+          state: "mounted"
+          fstype: "nfs"
+          name: /media/root/FileSync
+          src: "{{NFS_IP}}:/media/FileSync"
+          opts: defaults
+          dump: 0
+          passno: 0
+  
+  - name: Setup Upodder Automation
+    hosts: Chimeara
+    tasks:
+# Makes Modification to default Setup.sh file from Git Repo
+      - name: Modify Setup.sh to Create File Structure
+        shell: echo 'mkdir -p /media/root/FileSync/Podcast/$1' >> /root/Upodder/Setup.sh
+      - name: Modify Setup.sh to shedule the container to Auto-run
+        shell: echo 'echo \'ExecStart=docker run -v "/media/root/FileSync/Podcast/$1:/mnt/output" -v "$PWD/Podcasts/$1/config:/mnt/config" upodder\' >> /etc/systemd/system/docker_upodder.service' >> /root/Upodder/Setup.sh
+      
