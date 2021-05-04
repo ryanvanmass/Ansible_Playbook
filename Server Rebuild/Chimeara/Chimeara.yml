@@ -57,5 +57,30 @@
       - name: Modify Setup.sh to Create File Structure
         shell: echo 'mkdir -p /media/root/FileSync/Podcast/$1' >> /root/Upodder/Setup.sh
       - name: Modify Setup.sh to shedule the container to Auto-run
-        shell: echo 'echo \'ExecStart=docker run -v "/media/root/FileSync/Podcast/$1:/mnt/output" -v "$PWD/Podcasts/$1/config:/mnt/config" upodder\' >> /etc/systemd/system/docker_upodder.service' >> /root/Upodder/Setup.sh
-      
+        shell: echo "echo \"ExecStart=docker run --rm -v \"/media/root/FileSync/Podcast/$1:/mnt/output\" -v \"$PWD/Podcasts/$1/config:/mnt/config\" upodder\" >> /etc/systemd/system/docker_upodder.service" >> /root/Upodder/Setup.sh
+      - name: Modify Setup.sh to refresh Systemd Services
+        shell: echo 'systemctl daemon-reload' >> /root/Upodder/Setup.sh
+      - name: Copy Service to Host
+        copy:
+          src: /root/Playbooks/ Server Rebuild/Chimeara/Systemd Timers/docker_podcast.service
+          dest: /etc/systemd/system
+      - name: Copy Timer to Host
+        copy:
+          src: /root/Playbooks/ Server Rebuild/Chimeara/Systemd Timers/docker_podcast.timer
+          dest: /etc/systemd/system
+
+  - name: Setup Youtube-DL Automation
+    hosts: Chimeara
+    tasks:
+      - name: Copy Setup.sh to Host
+        copy:
+          src: /root/Playbooks/ Server Rebuild/Chimeara/YoutubeDL_Setup.sh
+          dest: /root/YoutubeDL/Setup.sh
+      - name: Copy Service to Host
+        copy:
+          src: /root/Playbooks/ Server Rebuild/Chimeara/Systemd Timers/docker_video.service
+          dest: /etc/systemd/system
+      - name: Copy Timer to Host
+        copy:
+          src: /root/Playbooks/ Server Rebuild/Chimeara/Systemd Timers/docker_video.timer
+          dest: /etc/systemd/system

@@ -1,0 +1,5 @@
+[Unit]
+Description=docker_video
+
+[Service]
+Type=oneshot
