@@ -58,9 +58,11 @@
           src: /root/Playbooks/Server Rebuild/DeathStar/Systemd Timer/Podcast_Sync.timer
           dest: /etc/systemd/system
       - name: Playlist_Sync Service
+        copy:
           src: /root/Playbooks/Server Rebuild/DeathStar/Systemd Timer/Playlist_Sync.service
           dest: /etc/systemd/system
       - name: Playlist_Sync Timer
+        copy:
           src: /root/Playbooks/Server Rebuild/DeathStar/Systemd Timer/Playlist_Sync.timer
           dest: /etc/systemd/system
 

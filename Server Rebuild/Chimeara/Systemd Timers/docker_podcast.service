@@ -1,5 +1,5 @@
 [Unit]
-Description=docker_video
+Description=docker_podcast
 
 [Service]
 Type=oneshot

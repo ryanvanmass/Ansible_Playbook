@@ -1,8 +1,8 @@
 [Unit]
-Description=docker_video
+Description=docker_podcast
 
 [Timer]
-OnCalendar=00/6:30
+OnCalendar=00/1:05
 Persistent=true
 
 [Install]
