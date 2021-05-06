@@ -1,5 +1,5 @@
 [Unit]
-Description=Playlist_Sync
+Description=video_sync
 
 [Service]
 Type=oneshot

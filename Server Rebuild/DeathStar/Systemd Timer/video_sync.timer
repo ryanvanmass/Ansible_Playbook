@@ -1,8 +1,8 @@
 [Unit]
-Description=Podcast_Sync
+Description=video_sync
 
 [Timer]
-OnCalendar=00/1:50
+OnCalendar=00/6:50
 Persistent=true
 
 [Install]

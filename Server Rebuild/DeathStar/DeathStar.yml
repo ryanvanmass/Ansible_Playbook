@@ -51,19 +51,19 @@
     tasks:
       - name: Podcast_Sync Service
         copy:
-          src: /root/Playbooks/Server Rebuild/DeathStar/Systemd Timer/Podcast_Sync.service
+          src: /root/Playbooks/Server Rebuild/DeathStar/Systemd Timer/podcast_sync.service
           dest: /etc/systemd/system
       - name: Podcast_Sync Timer
         copy: 
-          src: /root/Playbooks/Server Rebuild/DeathStar/Systemd Timer/Podcast_Sync.timer
+          src: /root/Playbooks/Server Rebuild/DeathStar/Systemd Timer/podcast_sync.timer
           dest: /etc/systemd/system
       - name: Playlist_Sync Service
         copy:
-          src: /root/Playbooks/Server Rebuild/DeathStar/Systemd Timer/Playlist_Sync.service
+          src: /root/Playbooks/Server Rebuild/DeathStar/Systemd Timer/video_sync.service
           dest: /etc/systemd/system
       - name: Playlist_Sync Timer
         copy:
-          src: /root/Playbooks/Server Rebuild/DeathStar/Systemd Timer/Playlist_Sync.timer
+          src: /root/Playbooks/Server Rebuild/DeathStar/Systemd Timer/video_sync.timer
           dest: /etc/systemd/system
 
 
