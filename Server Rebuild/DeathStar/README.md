@@ -1,27 +1,29 @@
-# How it works
-## Downloading Scripts for Setting up OpenVPN and PiHole
-Downloads the setup and configuration scripts for OpenVPN and Pihole
+# DeathStar
+## Services
+* OpenVPN
+* NFS
+* Ansible
 
-## Set SELinux Policy
-Sets the SELinux Policy to permisive mode so that PiHole will run
-
-## Configure NFS
-Configures and NFS Share to be utilized for Transferring Podcasts from the Chimaera to Slave1
-
-# How to use (Manual Configuration)
-## Ansible
+## Setup
+### Ansible
 1. Install Ansible
 ```
-dnf install ansible
+    dnf install ansible
 ```
 2. Generate SSH Keys
 ```
-ssh-keygen
+    ssh-keygen
 ```
-3. Copy Anasible Server Public key to `~/.ssh/authorized_keys` file on destination servers
+3. Copy Ansible Server Public key to `~/.ssh/authorized_keys` file on destination servers
 4. Add Destination Servers ip to `/etc/ansible/hosts`
 
-## OpenVPN
+### Playbook
+Run the DeathStar Ansible Playbook
+```
+    ansible-playbook DeathStar.yml
+```
+
+### OpenVPN
 Guide: https://docs.pi-hole.net/guides/vpn/installation/
 1. Execute Setup Script
 ```
@@ -32,7 +34,7 @@ sh /root/openvpn-install.sh
 4. select Google for DNS
 5. name the first client the hostname of the server
 
-## Pihole
+### Pihole
 1. reboot for configuration change to take effect
 2. Run the following `touch /etc/sysconfig/network-scripts/ifcfg-tun0`
 3. Download and Execute Setup Script
@@ -55,5 +57,5 @@ push "dhcp-option DNS 10.8.0.1"
 ```
 14. Login to web portal and change password
 
-## Podcast_Sync
-1. Edit `/etc/systemd/system/Podcast_Sync.service` to update the IP addess of the rsync command to the VPN IP of the Slave1
+### Podcast_Sync and Video_Sync
+1. Edit `podcast_sync.service` and `video_sync.service` to update the IP address of the rsync command to the VPN IP of the Slave1
