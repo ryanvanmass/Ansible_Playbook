@@ -1,5 +1,5 @@
 [Unit]
-Description=Podcast_Sync
+Description=FileSync
 
 [Timer]
 OnCalendar=00/1:50
