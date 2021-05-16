@@ -1,8 +1,0 @@
-[Unit]
-Description=GitUpdater
-
-[Service]
-Type=oneshot
-ExecStart=ansible-playbook /root/Playbooks/Git Updater/.Git_AutoUpdater.yml
-ExecStart=ansible-playbook /root/Playbooks/Git Updater/Git_Updater.yml
-WorkingDirectory=/

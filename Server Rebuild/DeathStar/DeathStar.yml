@@ -49,21 +49,13 @@
   - name: Set up Systemd Timers and services
     hosts: localhost
     tasks:
-      - name: Podcast_Sync Service
+      - name: FileSync Service
         copy:
-          src: /root/Playbooks/Server Rebuild/DeathStar/Systemd Timer/podcast_sync.service
-          dest: /etc/systemd/system
-      - name: Podcast_Sync Timer
-        copy: 
-          src: /root/Playbooks/Server Rebuild/DeathStar/Systemd Timer/podcast_sync.timer
-          dest: /etc/systemd/system
-      - name: Playlist_Sync Service
-        copy:
-          src: /root/Playbooks/Server Rebuild/DeathStar/Systemd Timer/video_sync.service
+          src: /root/Playbooks/Server Rebuild/DeathStar/Systemd Timer/FileSync.service
           dest: /etc/systemd/system
       - name: Playlist_Sync Timer
         copy:
-          src: /root/Playbooks/Server Rebuild/DeathStar/Systemd Timer/video_sync.timer
+          src: /root/Playbooks/Server Rebuild/DeathStar/Systemd Timer/FileSync.timer
           dest: /etc/systemd/system
 
 

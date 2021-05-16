@@ -1,8 +1,8 @@
 [Unit]
-Description=video_sync
+Description=FileSync
 
 [Timer]
-OnCalendar=00/6:50
+OnCalendar=00/1:50
 Persistent=true
 
 [Install]

@@ -1,8 +1,0 @@
-[Unit]
-Description=podcast_sync
-
-[Service]
-Type=oneshot
-ExecStart=sh -c 'rsync -ruPh /media/FileSync/Podcast root@10.8.0.0:/mnt/NetworkShares/Styx/Podcast/'
-ExecStart=sh -c 'rm -rf /media/FileSync/Podcast/*'
-WorkingDirectory=/
