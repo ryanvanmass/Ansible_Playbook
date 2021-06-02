@@ -1,0 +1,31 @@
+---
+  - name: Download Neccacary Packages
+    hosts:
+    tasks:
+      - name: Git
+        apt:
+          name: git
+          state: latest
+      - name: curl
+        apt:
+          name: curl
+          state: latest
+      - name: Download Docker Install Script
+        shell: curl -fsSL https://get.docker.com -o get-docker.sh
+      - name: Run Docker Install Script
+        shell: sh get-docker.sh
+      - name: Enable and start Docker
+        systemd:
+          name: docker
+          state: restarted
+          enabled: yes
+      - name: Add Current User to docker group
+        shell: usermod -aG docker $USER
+
+  - name: Clone VSCode Docker Build File
+    hosts:
+    tasks:
+      - name: Clone Repo
+        git:
+          repo: https://github.com/ryanvnamass/VSCode-Server
+          dest: /home/$USER/Template

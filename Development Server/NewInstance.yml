@@ -1,0 +1,47 @@
+---
+  - name: Building Docker Enviroment
+    hosts: localhost
+    vars_prompt:
+      - name: EndUser
+        prompt: What is the EndUsers Username?
+        private: no
+
+      - name: Password
+        prompt: What is the EndUsers Choosen Password?
+        private: no
+    vars_file:
+      - /home/$USER/Development\ Sever/.port
+    tasks:
+      - name: Build Directory Structure
+        copy:
+          src: ~/Template
+          dest: ~/{{EndUser}}
+      
+      -name: Building Config File
+        shell: echo " "
+      - name: First Line of Config File
+        shell: echo "bind-addr: 0.0.0.0:8080" >> ~/{{EndUser}}/config.yml
+      - name: Second Line Config File
+        shell: echo "auth: password" >> ~/{{EndUser}}/config.yml
+      - name: Third Line Config File
+        shell: echo "password: {{Password}}" >> ~/{{EndUser}}/config.yml
+      - name: Forth Line Config File
+        shell: echo "cert: false" >> ~/{{EndUser}}/config.yml
+
+      - name: Building Docker Image
+        shell: docker build -t {{EndUser}} /home/$USER/{{EndUser}}/Dockerfile
+      
+      - name: Start the New Enviroment
+        shell: docker run -d -p {{Port}}:8080 -v /mnt:/mnt --name {{EndUser}} {{EndUser}}
+
+  - name: Update Port Record
+    hosts: localhost
+    vars_file:
+      - /home/$USER/Development\ Sever/.port
+    tasks:
+      - name: something
+        shell: echo "---" >> /home/$USER/Development\ Sever/.port2
+      - name: something else
+        shell: echo "Port: {{Port + 1}}\" >> /home/$USER/Development\ Sever/.port2
+      - name: this thing
+        shell: cp /home/$USER/Development\ Sever/.port2 /home/$USER/Development\ Sever/.port       
