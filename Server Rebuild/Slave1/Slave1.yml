@@ -34,14 +34,14 @@
   - name: Create VPN NFS Shares
     hosts: Slave1
     tasks:
-      - name: Header
-        shell: echo "# VPN Shares" >> /etc/exports
-      - name: Olympus
-        shell: echo "/mnt/NetworkShares/Olympus 10.8.0.0/24(rw,sync,no_root_squash)" >> /etc/exports
-      - name: Hades
-        shell: echo "/mnt/NetworkShares/Hades 10.8.0.0/24(rw,sync,no_root_squash)" >> /etc/exports
-      - name: Labyrinth
-        shell: echo "/mnt/NetworkShares/Labyrinth 10.8.0.0/24(rw,sync,no_root_squash)" >> /etc/exports
+#      - name: Header
+#        shell: echo "# VPN Shares" >> /etc/exports
+#      - name: Olympus
+#        shell: echo "/mnt/NetworkShares/Olympus 10.8.0.0/24(rw,sync,no_root_squash)" >> /etc/exports
+#      - name: Hades
+#        shell: echo "/mnt/NetworkShares/Hades 10.8.0.0/24(rw,sync,no_root_squash)" >> /etc/exports
+#      - name: Labyrinth
+#        shell: echo "/mnt/NetworkShares/Labyrinth 10.8.0.0/24(rw,sync,no_root_squash)" >> /etc/exports
       - name: Restart NFS Service
         systemd:
           name: nfs-server
@@ -55,28 +55,57 @@
           state: enabled
           immediate: yes
 
-  - name: Create Local NFS Shares
-    hosts: Slave1
-    vars_prompt:
-      - name: NFS_Network
-        prompt: What is the Network address for the Local NFS Share?
-        private: no
-    tasks:
-      - name: Header
-        shell: echo "# Local Shares" >> /etc/exports
-      - name: Olympus
-        shell: echo "/mnt/NetworkShares/Olympus {{NFS_Network}}(rw,sync,no_root_squash)" >> /etc/exports
-      - name: Hades
-        shell: echo "/mnt/NetworkShares/Hades {{NFS_Network}}(rw,sync,no_root_squash)" >> /etc/exports
-      - name: Labyrinth
-        shell: echo "/mnt/NetworkShares/Labyrinth {{NFS_Network}}(rw,sync,no_root_squash)" >> /etc/exports
-      - name: Restart NFS Service
-        systemd:
-          name: nfs-server
-          state: restarted
-          daemon_reload: yes
-          enabled: yes
+#  - name: Create Local NFS Shares
+#    hosts: Slave1
+#    vars_prompt:
+#      - name: NFS_Network
+#        prompt: What is the Network address for the Local NFS Share?
+#        private: no
+#    tasks:
+#      - name: Header
+#        shell: echo "# Local Shares" >> /etc/exports
+#      - name: Olympus
+#        shell: echo "/mnt/NetworkShares/Olympus {{NFS_Network}}(rw,sync,no_root_squash)" >> /etc/exports
+#      - name: Hades
+#        shell: echo "/mnt/NetworkShares/Hades {{NFS_Network}}(rw,sync,no_root_squash)" >> /etc/exports
+#      - name: Labyrinth
+#        shell: echo "/mnt/NetworkShares/Labyrinth {{NFS_Network}}(rw,sync,no_root_squash)" >> /etc/exports
+#      - name: Restart NFS Service
+#        systemd:
+#          name: nfs-server
+#          state: restarted
+#          daemon_reload: yes
+#          enabled: yes
 
+# Starting work on Transitioning from Traditional SMB and NFS Config to using cockpit-file-sharing by 45Drives
+  - name: Install Cockpit Modules
+    hosts: Slave1
+    tasks:
+      - name: Cockpit-File-Sharing
+
+      - name: Cockpit-Navigator  
+  
+  - name: Configuring Samba Shares
+    hosts: Slave1
+    tasks:
+      - name: Copy Config File to Server
+        copy:
+          src: /root/Playbooks/Server Rebuild/Slave1/Config_Files/smb.conf
+          dest: /root/Config_Files/
+      - name: Import Config File
+        shell: net conf import /root/Config_Files/smb.conf
+  
+  - name: Configure NFS Shares
+    hosts: Slave1
+    tasks:
+      - name: Remove Default Config File
+        shell: rm /etc/exports.d/cockpit-file-sharing.exports
+      - name: Copy Copy Config File to Server
+        copy:
+          src: /root/Playbooks/Server Rebuild/Slave1/Config_Files/cockpit-file-sharing.exports
+          dest: /root/Config_Files/
+      - name: Import Config
+        shell: cp /root/Config_Files/cockpit-file-sharing.exports /etc/exports.d/  
 #Uncomment if you need to rebuild Config File
 #  - name: Rclone Configuration
 #    hosts: Slave1
