@@ -158,7 +158,6 @@
           permanent: true
           state: enabled
           immediate: yes
-      - name: 
 
   - name: Configuring Default Shell
     hosts: Slave1
