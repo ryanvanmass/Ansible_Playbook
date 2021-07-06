@@ -3,8 +3,8 @@
 ## Chimeara
 ### Development
 [X] Transition from Docker to Podman
-[ ] Transition from Apt to DNF
-[ ] Changing Naming of Services from Docker to Podman
+[X] Transition from Apt to DNF
+[X] Changing Naming of Services from Docker to Podman
 [ ] Add Cockpit Integrartions (navigator and Podman)
 [ ] Optional: Determine issue with CloudC2 Container (Not Building)
 
@@ -19,8 +19,8 @@
 ### Development
 [X] Review Code
 [ ] Implement NFS share config via Cockpit-File-Sharing
-[ ] Remove Nextcloud/Docker Configuration
-[ ] Clean Up Default Shell Configuration
+[X] Remove Nextcloud/Docker Configuration
+[X] Clean Up Default Shell Configuration
 [ ] Add Cockpit Itegrations (Navigator and Cockpit-File-Sharing)
 
 ### Testing
@@ -49,6 +49,8 @@
 ### Development
 [X] Trasition from Traditional SMB Config to Cockpit-File-Sharing
 [X] Trasition from Traditional NFS Config to Cockpit-File-Sharing
+[X] Add ZFS Config
+[X] Add ZFS Manger Cockpit Module
 
 ### Testing
 [ ] Complete
@@ -59,7 +61,8 @@
 
 ## Transition from CentOS Steam To Rocky
 ### Development
-[ ] Test Script
+[X] Test Script
+	**Broken**
 [ ] Build Playbook
 
 ### Testing

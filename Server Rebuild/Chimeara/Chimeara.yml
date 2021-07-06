@@ -34,8 +34,8 @@
         private: no
     tasks:
       - name: Install NFS Utility
-        apt:
-          name: nfs-common
+        dnf:
+          name: nfs-utility
           state: latest
       - name: Create Mount Point Directory
         file:
@@ -58,16 +58,16 @@
       - name: Modify Setup.sh to Create File Structure
         shell: echo " " >> /root/Upodder/Setup.sh && echo 'mkdir -p /media/root/FileSync/Podcast/$1' >> /root/Upodder/Setup.sh
       - name: Modify Setup.sh to shedule the container to Auto-run
-        shell: echo "echo \"ExecStart=podman run --rm -v \"/media/root/FileSync/Podcast/\$1:/mnt/output\" -v \"/root/Upodder/Podcasts/\$1/config:/mnt/config\" upodder\" >> /etc/systemd/system/docker_podcast.service" >> /root/Upodder/Setup.sh
+        shell: echo "echo \"ExecStart=podman run --rm -v \"/media/root/FileSync/Podcast/\$1:/mnt/output\" -v \"/root/Upodder/Podcasts/\$1/config:/mnt/config\" upodder\" >> /etc/systemd/system/podman_podcast.service" >> /root/Upodder/Setup.sh
       - name: Modify Setup.sh to refresh Systemd Services
         shell: echo 'systemctl daemon-reload' >> /root/Upodder/Setup.sh
       - name: Copy Service to Host
         copy:
-          src: /root/Playbooks/Server Rebuild/Chimeara/Systemd Timers/docker_podcast.service
+          src: /root/Playbooks/Server Rebuild/Chimeara/Systemd Timers/podman_podcast.service
           dest: /etc/systemd/system
       - name: Copy Timer to Host
         copy:
-          src: /root/Playbooks/Server Rebuild/Chimeara/Systemd Timers/docker_podcast.timer
+          src: /root/Playbooks/Server Rebuild/Chimeara/Systemd Timers/podman_podcast.timer
           dest: /etc/systemd/system
 
   - name: Setup Youtube-DL Automation
@@ -79,9 +79,9 @@
           dest: /root/YoutubeDL/Setup.sh
       - name: Copy Service to Host
         copy:
-          src: /root/Playbooks/Server Rebuild/Chimeara/Systemd Timers/docker_video.service
+          src: /root/Playbooks/Server Rebuild/Chimeara/Systemd Timers/podman_video.service
           dest: /etc/systemd/system
       - name: Copy Timer to Host
         copy:
-          src: /root/Playbooks/Server Rebuild/Chimeara/Systemd Timers/docker_video.timer
+          src: /root/Playbooks/Server Rebuild/Chimeara/Systemd Timers/podman_video.timer
           dest: /etc/systemd/system

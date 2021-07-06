@@ -30,48 +30,18 @@
         dnf:
           name: hugo
           state: latest
-# Installing Packages for ZFS and doing basic Config
-  - name: Install and Configure ZFS
-    hosts: Slave1
-    tasks:
-      - name: Install Mbuffer
-        dnf:
-          name: mbuffer
-          state: latest
-      - name: Add ZFS Repo
-        shell: sudo dnf install https://zfsonlinux.org/epel/zfs-release.el8_4.noarch.rpm
-      - name: Import GPG Key
-        shell: gpg --import --import-options show-only /etc/pki/rpm-gpg/RPM-GPG-KEY-zfsonlinux
-      - name: Install Extra Packages for Enterprise Linux
-        dnf:
-          name: Install epel-release
-          state: latest
-      - name: Install Kernel-devel
-        dnf:
-          name: kernel-devel
-          state: latest
-      - name: Install ZFS
-        dnf:
-          name: ZFS
-          state: latest
-      - name: Install ZFS Cockpit Module
-        shell: git clone https://github.com/45Drives/cockpit-zfs-manager && cp -r cockpit-zfs-manager/zfs /usr/share/cockpit/ && rm -r cockpit-zfs-manager
-      - name: Enable ZnapZend Repo
-        shell dnf corp enable spike/znapzend
-      - name: Install ZnapZend
-        dnf:
-          name: znapzend
-          state: latest
-      - name: Enable Znapzend Service
-        systems:
-          name: znapzend
-          state: restarted
-          daemon_reload: yes
-          enabled: yes
 
-  - name: Configure NFS Service
+  - name: Create VPN NFS Shares
     hosts: Slave1
     tasks:
+#      - name: Header
+#        shell: echo "# VPN Shares" >> /etc/exports
+#      - name: Olympus
+#        shell: echo "/mnt/NetworkShares/Olympus 10.8.0.0/24(rw,sync,no_root_squash)" >> /etc/exports
+#      - name: Hades
+#        shell: echo "/mnt/NetworkShares/Hades 10.8.0.0/24(rw,sync,no_root_squash)" >> /etc/exports
+#      - name: Labyrinth
+#        shell: echo "/mnt/NetworkShares/Labyrinth 10.8.0.0/24(rw,sync,no_root_squash)" >> /etc/exports
       - name: Restart NFS Service
         systemd:
           name: nfs-server
@@ -84,6 +54,28 @@
           permanent: yes
           state: enabled
           immediate: yes
+
+#  - name: Create Local NFS Shares
+#    hosts: Slave1
+#    vars_prompt:
+#      - name: NFS_Network
+#        prompt: What is the Network address for the Local NFS Share?
+#        private: no
+#    tasks:
+#      - name: Header
+#        shell: echo "# Local Shares" >> /etc/exports
+#      - name: Olympus
+#        shell: echo "/mnt/NetworkShares/Olympus {{NFS_Network}}(rw,sync,no_root_squash)" >> /etc/exports
+#      - name: Hades
+#        shell: echo "/mnt/NetworkShares/Hades {{NFS_Network}}(rw,sync,no_root_squash)" >> /etc/exports
+#      - name: Labyrinth
+#        shell: echo "/mnt/NetworkShares/Labyrinth {{NFS_Network}}(rw,sync,no_root_squash)" >> /etc/exports
+#      - name: Restart NFS Service
+#        systemd:
+#          name: nfs-server
+#          state: restarted
+#          daemon_reload: yes
+#          enabled: yes
 
 # Starting work on Transitioning from Traditional SMB and NFS Config to using cockpit-file-sharing by 45Drives
   - name: Install Cockpit Modules
@@ -114,7 +106,6 @@
           dest: /root/Config_Files/
       - name: Import Config
         shell: cp /root/Config_Files/cockpit-file-sharing.exports /etc/exports.d/  
-
 #Uncomment if you need to rebuild Config File
 #  - name: Rclone Configuration
 #    hosts: Slave1
@@ -138,13 +129,54 @@
 #            (.*)y/e/d>(.*): "y"
 #            (.*)e/n/d/r/c/s/q>(.*): "q"
 
-  - name: Disable SELinux
+  - name: Set up Network Share Backup
     hosts: Slave1
     tasks:
-    - name: Set SELinux Policy
+      - name: Copying Network Share Backup Service
+        copy:
+          src: /root/Playbooks/Server Rebuild/Slave1/Systemd Timer/NetworkShare_Backup.service
+          dest: /etc/systemd/system
+      - name: Copying Network Share Backup Timer
+        copy:
+          src: /root/Playbooks/Server Rebuild/Slave1/Systemd Timer/NetworkShare_Backup.timer
+          dest: /etc/systemd/system
+      - name: Create Log Directory
+        file:
+          path: /var/log/NetworkShare_Backup
+          state: directory
+      - name: Starting Timer
+        systemd:
+          name: NetworkShare_Backup.timer
+          state: restarted
+          daemon_reload: yes
+          enabled: yes
+      
+      - name: Set SELinux Policy
         selinux:
           policy: targeted
           state: permissive
+    
+  - name: Set up Cloud Backup
+    hosts: Slave1
+    tasks:
+    - name: Copying Cloud Backup Service
+      copy:
+        src: /root/Playbooks/Server Rebuild/Slave1/Systemd Timer/Cloud_Backup.service
+        dest: /etc/systemd/system
+    - name: Copying Cloud Backup Timer
+      copy:
+        src: /root/Playbooks/Server Rebuild/Slave1/Systemd Timer/Cloud_Backup.timer
+        dest: /etc/systemd/system
+    - name: Create Log Directory
+      file:
+        path: /var/log/Cloud_Backup
+        state: directory
+    - name: Starting Timer
+      systemd:
+        name: Cloud_Backup.timer
+        state: restarted
+        daemon_reload: yes
+        enabled: yes
 
   - name: Configure Hugo
     hosts: Slave1
