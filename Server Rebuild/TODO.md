@@ -5,11 +5,11 @@
 [X] Transition from Docker to Podman
 [X] Transition from Apt to DNF
 [X] Changing Naming of Services from Docker to Podman
-[ ] Add Cockpit Integrartions (navigator and Podman)
+[X] Add Cockpit Integrartions (navigator and Podman)
 [ ] Optional: Determine issue with CloudC2 Container (Not Building)
 
 ### Testing
-[ ] Complete
+[ ] Playbook
 
 ### Documentation
 [ ] Readme is Updated
@@ -18,13 +18,13 @@
 ## DeathStar
 ### Development
 [X] Review Code
-[ ] Implement NFS share config via Cockpit-File-Sharing
+[X] Implement NFS share config via Cockpit-File-Sharing
 [X] Remove Nextcloud/Docker Configuration
 [X] Clean Up Default Shell Configuration
-[ ] Add Cockpit Itegrations (Navigator and Cockpit-File-Sharing)
+[X] Add Cockpit Itegrations (Navigator and Cockpit-File-Sharing)
 
 ### Testing
-[ ] Complete
+[ ] Playbook
 
 ### Documentation
 [ ] Readme is Updated
@@ -51,9 +51,13 @@
 [X] Trasition from Traditional NFS Config to Cockpit-File-Sharing
 [X] Add ZFS Config
 [X] Add ZFS Manger Cockpit Module
+[X] Add Cockpit-File-Sharing Module
+[X] Add Cockpit-Navigator
+[X] Build Podman Image for Hugo (Hugo is not packaged for EPEL8)
 
 ### Testing
-[ ] Complete
+[ ] Playbook
+[ ] Hugo Podman Container
 
 ### Documentation
 [ ] Readme is Updated

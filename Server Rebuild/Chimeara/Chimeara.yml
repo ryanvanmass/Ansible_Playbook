@@ -85,3 +85,15 @@
         copy:
           src: /root/Playbooks/Server Rebuild/Chimeara/Systemd Timers/podman_video.timer
           dest: /etc/systemd/system
+
+  - name: Add Cockpit Modules
+    hosts: Chimeara
+    tasks:
+      - name: Add 45 Drives Repo
+        shell: curl -o /etc/yum.repos.d/45drives.repo http://images.45drives.com/repo/centos/45drives-centos.repo
+      - name: refresh cached Package List
+        shell: dnf clean all && dnf makecache
+      - name: Cockpit-Navigator  
+        dnf:
+          name: cockpit-navigator
+          state: latest

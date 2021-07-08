@@ -26,10 +26,15 @@
         dnf:
           name: git
           state: latest
-      - name: Hugo
+      - name: Epel-Release
         dnf:
-          name: hugo
+          name: epel-release
           state: latest
+      - name: Samba
+        dnf:
+          name: samba
+          state: latest
+
 # Installing Packages for ZFS and doing basic Config
   - name: Install and Configure ZFS
     hosts: Slave1
@@ -42,10 +47,6 @@
         shell: sudo dnf install https://zfsonlinux.org/epel/zfs-release.el8_4.noarch.rpm
       - name: Import GPG Key
         shell: gpg --import --import-options show-only /etc/pki/rpm-gpg/RPM-GPG-KEY-zfsonlinux
-      - name: Install Extra Packages for Enterprise Linux
-        dnf:
-          name: Install epel-release
-          state: latest
       - name: Install Kernel-devel
         dnf:
           name: kernel-devel
@@ -54,16 +55,14 @@
         dnf:
           name: ZFS
           state: latest
-      - name: Install ZFS Cockpit Module
-        shell: git clone https://github.com/45Drives/cockpit-zfs-manager && cp -r cockpit-zfs-manager/zfs /usr/share/cockpit/ && rm -r cockpit-zfs-manager
       - name: Enable ZnapZend Repo
-        shell dnf corp enable spike/znapzend
+        shell: dnf corp enable spike/znapzend
       - name: Install ZnapZend
         dnf:
           name: znapzend
           state: latest
       - name: Enable Znapzend Service
-        systems:
+        systemd:
           name: znapzend
           state: restarted
           daemon_reload: yes
@@ -89,10 +88,23 @@
   - name: Install Cockpit Modules
     hosts: Slave1
     tasks:
+      - name: Add 45 Drives Repo
+        shell: curl -o /etc/yum.repos.d/45drives.repo http://images.45drives.com/repo/centos/45drives-centos.repo
+      - name: refresh cached Package List
+        shell: dnf clean all && dnf makecache
       - name: Cockpit-File-Sharing
-
+        dnf:
+          name: cockpit-file-sharing
+          state: latest
       - name: Cockpit-Navigator  
-  
+        dnf:
+          name: cockpit-navigator
+          state: latest
+      - name: ZFS Manager
+        dnf:
+          name: cockpit-zfs-manager
+          state: latest
+          
   - name: Configuring Samba Shares
     hosts: Slave1
     tasks:
@@ -142,9 +154,9 @@
     hosts: Slave1
     tasks:
     - name: Set SELinux Policy
-        selinux:
-          policy: targeted
-          state: permissive
+      selinux:
+        policy: targeted
+        state: permissive
 
   - name: Configure Hugo
     hosts: Slave1
