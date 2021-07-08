@@ -54,6 +54,8 @@
 [X] Add Cockpit-File-Sharing Module
 [X] Add Cockpit-Navigator
 [X] Build Podman Image for Hugo (Hugo is not packaged for EPEL8)
+[X] Add Cron Job to Load ZFS Module at boot
+[X] Add Task to build Hugo Container
 
 ### Testing
 [ ] Playbook

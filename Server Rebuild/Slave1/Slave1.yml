@@ -26,7 +26,7 @@
         dnf:
           name: git
           state: latest
-      - name: Epel-Release
+      - name: Extra Packages for Enterprise Linux
         dnf:
           name: epel-release
           state: latest
@@ -44,7 +44,7 @@
           name: mbuffer
           state: latest
       - name: Add ZFS Repo
-        shell: sudo dnf install https://zfsonlinux.org/epel/zfs-release.el8_4.noarch.rpm
+        shell: sudo dnf install https://zfsonlinux.org/epel/zfs-release.el8_4.noarch.rpm -y
       - name: Import GPG Key
         shell: gpg --import --import-options show-only /etc/pki/rpm-gpg/RPM-GPG-KEY-zfsonlinux
       - name: Install Kernel-devel
@@ -53,10 +53,10 @@
           state: latest
       - name: Install ZFS
         dnf:
-          name: ZFS
+          name: zfs
           state: latest
       - name: Enable ZnapZend Repo
-        shell: dnf corp enable spike/znapzend
+        shell: sudo dnf copr enable spike/znapzend -y
       - name: Install ZnapZend
         dnf:
           name: znapzend
@@ -67,7 +67,12 @@
           state: restarted
           daemon_reload: yes
           enabled: yes
-
+      - name: Set ZFS Module to load at boot
+        cron:
+          name: "Load ZFS Module"
+          special_time: reboot
+          job: "/sbin/modprobe zfs"
+          
   - name: Configure NFS Service
     hosts: Slave1
     tasks:
@@ -91,7 +96,7 @@
       - name: Add 45 Drives Repo
         shell: curl -o /etc/yum.repos.d/45drives.repo http://images.45drives.com/repo/centos/45drives-centos.repo
       - name: refresh cached Package List
-        shell: dnf clean all && dnf makecache
+        shell: sudo dnf clean all && sudo dnf makecache
       - name: Cockpit-File-Sharing
         dnf:
           name: cockpit-file-sharing
@@ -102,7 +107,7 @@
           state: latest
       - name: ZFS Manager
         dnf:
-          name: cockpit-zfs-manager
+          name: https://github.com/45Drives/cockpit-zfs-manager/releases/download/v1.3.0/cockpit-zfs-manager-1.3.0-2.el8.noarch.rpm
           state: latest
           
   - name: Configuring Samba Shares
@@ -171,6 +176,8 @@
           permanent: true
           state: enabled
           immediate: yes
+      - name: Build Hugo Container
+        shell: podman build -t website /home/ryan/Podman/"Hugo Server"/Dockerfile
 
   - name: Configuring Default Shell
     hosts: Slave1
