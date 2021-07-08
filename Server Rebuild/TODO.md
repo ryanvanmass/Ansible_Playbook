@@ -63,6 +63,16 @@
 [ ] Readme is Updated
 
 
+## Parents VPN
+### Build Playbook
+[ ] Complete
+
+### Testing
+[ ] Complete
+
+### Documentation
+[ ] Completed
+
 ## Transition from CentOS Steam To Rocky
 ### Development
 [X] Test Script

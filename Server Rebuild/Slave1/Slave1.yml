@@ -111,9 +111,9 @@
       - name: Copy Config File to Server
         copy:
           src: /root/Playbooks/Server Rebuild/Slave1/Config_Files/smb.conf
-          dest: /root/Config_Files/
+          dest: /home/ryan/Config_Files/
       - name: Import Config File
-        shell: net conf import /root/Config_Files/smb.conf
+        shell: net conf import /home/ryan/Config_Files/smb.conf
   
   - name: Configure NFS Shares
     hosts: Slave1
@@ -123,9 +123,9 @@
       - name: Copy Copy Config File to Server
         copy:
           src: /root/Playbooks/Server Rebuild/Slave1/Config_Files/cockpit-file-sharing.exports
-          dest: /root/Config_Files/
+          dest: /home/ryan/Config_Files/
       - name: Import Config
-        shell: cp /root/Config_Files/cockpit-file-sharing.exports /etc/exports.d/  
+        shell: cp /home/ryan/Config_Files/cockpit-file-sharing.exports /etc/exports.d/  
 
 #Uncomment if you need to rebuild Config File
 #  - name: Rclone Configuration
@@ -161,6 +161,10 @@
   - name: Configure Hugo
     hosts: Slave1
     tasks:
+      - name: Copy Podman Build File to Slave1
+        copy:
+          src: /root/Playbooks/Server Rebuild/Slave1/Podman
+          dest: /home/ryan/Podman
       - name: Allow Port 1313 through the Firewall
         firewalld:
           port: 1313/tcp
