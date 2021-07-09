@@ -1,5 +1,5 @@
 ---
-  - name: Install Required Packages
+  - name: Install Basic Packages
     hosts: Slave1
     tasks:
       - name: NFS-Utils
@@ -33,6 +33,10 @@
       - name: Samba
         dnf:
           name: samba
+          state: latest
+      - name: Fish
+        dnf:
+          name: fish
           state: latest
 
 # Installing Packages for ZFS and doing basic Config
@@ -109,6 +113,7 @@
         dnf:
           name: https://github.com/45Drives/cockpit-zfs-manager/releases/download/v1.3.0/cockpit-zfs-manager-1.3.0-2.el8.noarch.rpm
           state: latest
+          disable_gpg_check: yes
           
   - name: Configuring Samba Shares
     hosts: Slave1
@@ -117,14 +122,14 @@
         copy:
           src: /root/Playbooks/Server Rebuild/Slave1/Config_Files/smb.conf
           dest: /home/ryan/Config_Files/
+      - name: Set correct Permission for Config_Files folder
+      shell: sudo chown -R ryan /home/ryan/Config_Files && sudo chgrp -R ryan /home/ryan/Config_Files
       - name: Import Config File
         shell: net conf import /home/ryan/Config_Files/smb.conf
   
   - name: Configure NFS Shares
     hosts: Slave1
     tasks:
-      - name: Remove Default Config File
-        shell: rm /etc/exports.d/cockpit-file-sharing.exports
       - name: Copy Copy Config File to Server
         copy:
           src: /root/Playbooks/Server Rebuild/Slave1/Config_Files/cockpit-file-sharing.exports
@@ -169,26 +174,14 @@
       - name: Copy Podman Build File to Slave1
         copy:
           src: /root/Playbooks/Server Rebuild/Slave1/Podman
-          dest: /home/ryan/Podman
+          dest: /home/ryan/
+      - name: Set correct Permission for Podman folder
+        shell: sudo chown -R ryan /home/ryan/Podman && sudo chgrp -R ryan /home/ryan/Podman 
+      - name: Build Hugo Container
+        shell: podman build -t hugo /home/ryan/Podman/Hugo_Server/
       - name: Allow Port 1313 through the Firewall
         firewalld:
           port: 1313/tcp
           permanent: true
           state: enabled
           immediate: yes
-      - name: Build Hugo Container
-        shell: podman build -t website /home/ryan/Podman/"Hugo Server"/Dockerfile
-
-  - name: Configuring Default Shell
-    hosts: Slave1
-    tasks:
-      - name: Download Fish
-        dnf:
-          name: fish
-          state: latest
-      - name: Create Config Directory
-        file:
-          path: ~/.config/fish
-          state: directory
-      - name: Create Config File
-        shell: echo "#Remove Fish Welcome Message" >> ~/.config/fish/config.fish && echo "function fish_greeting" >> ~/.config/fish/config.fish && echo "end" >> ~/.config/fish/config.fish

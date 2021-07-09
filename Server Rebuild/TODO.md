@@ -62,7 +62,7 @@
 [ ] Hugo Podman Container
 
 ### Documentation
-[ ] Readme is Updated
+[X] Readme is Updated
 
 
 ## Parents VPN
