@@ -100,7 +100,7 @@
       - name: Add 45 Drives Repo
         shell: curl -o /etc/yum.repos.d/45drives.repo http://images.45drives.com/repo/centos/45drives-centos.repo
       - name: refresh cached Package List
-        shell: sudo dnf clean all && sudo dnf makecache
+        shell: sudo dnf clean all -y && sudo dnf makecache -y
       - name: Cockpit-File-Sharing
         dnf:
           name: cockpit-file-sharing
@@ -123,7 +123,7 @@
           src: /root/Playbooks/Server Rebuild/Slave1/Config_Files/smb.conf
           dest: /home/ryan/Config_Files/
       - name: Set correct Permission for Config_Files folder
-      shell: sudo chown -R ryan /home/ryan/Config_Files && sudo chgrp -R ryan /home/ryan/Config_Files
+        shell: sudo chown -R ryan /home/ryan/Config_Files && sudo chgrp -R ryan /home/ryan/Config_Files
       - name: Import Config File
         shell: net conf import /home/ryan/Config_Files/smb.conf
   

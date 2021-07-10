@@ -1,6 +1,6 @@
 # Slave1
 ## Role
-Primary File Server
+Slave1 is the Primary File Server hosting file shares using both the SMB and NFS protocols.
 
 ## Services
 * NFS
