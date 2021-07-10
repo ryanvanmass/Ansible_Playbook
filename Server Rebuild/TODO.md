@@ -22,6 +22,7 @@
 [X] Remove Nextcloud/Docker Configuration
 [X] Clean Up Default Shell Configuration
 [X] Add Cockpit Itegrations (Navigator and Cockpit-File-Sharing)
+[ ] Update FileSync Service to include DeathStar2
 
 ### Testing
 [ ] Playbook
@@ -65,9 +66,11 @@
 [X] Readme is Updated
 
 
-## Parents VPN
+## DeathStr2
 ### Build Playbook
-[ ] Complete
+[ ] Download OpenVPN Script
+[ ] Download PiHole Script
+[ ] Upload FileSync Service/Timer to Server
 
 ### Testing
 [ ] Complete
