@@ -59,7 +59,7 @@
 [X] Add Task to build Hugo Container
 
 ### Testing
-[ ] Playbook
+[X] Playbook
 [ ] Hugo Podman Container
 
 ### Documentation
