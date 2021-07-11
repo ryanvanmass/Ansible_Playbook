@@ -1,0 +1,9 @@
+[Unit]
+Description=FileSync
+
+[Timer]
+OnCalendar=00/1:50
+Persistent=true
+
+[Install]
+WantedBy=timers.target

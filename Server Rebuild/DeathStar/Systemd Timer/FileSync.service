@@ -3,3 +3,18 @@ Description=FileSync
 
 [Service]
 Type=oneshot
+#Podcast Sync
+ExecStart=sh -c 'rsync -ruPh /media/FileSync/Podcast ryan@10.8.0.3:/mnt/NetworkShares/Styx/Podcast'
+ExecStart=sh -c 'rm -rf /media/FileSync/Podcast/*'
+#Youtube-DL Sync
+ExecStart=sh -c 'rsync -ruPh /media/FileSync/Video/ ryan@10.8.0.3:/mnt/NetworkShares/Styx/Youtube'
+ExecStart=sh -c 'rm -rf /media/FileSync/Video/*'
+#VPN Profile Sync
+ExecStart=sh -c 'cp -r /root/OpenVPN/* /media/FileSync/DeathStar/'
+ExecStart=sh -c 'rsync -ruPh /media/FileSync/DeathStar/ ryan@10.8.0.3:/mnt/NetworkShares/Olympus/VPN/DeathStar'
+ExecStart=sh -c 'rm -rf /media/FileSync/DeathStar/*'
+ExecStart=sh -c 'rsync -ruPh /media/FileSync/DeathStar2/ ryan@10.8.0.3:/mnt/NetworkShares/Olympus/VPN/DeathStar2'
+ExecStart=sh -c 'rm -rf /media/FileSync/DeathStar2/*'
+
+
+WorkingDirectory=/

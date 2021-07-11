@@ -23,6 +23,7 @@
 [X] Remove Nextcloud/Docker Configuration
 [X] Clean Up Default Shell Configuration
 [X] Add Cockpit Itegrations (Navigator and Cockpit-File-Sharing)
+[ ] Update FileSync Service to include DeathStar2
 
 ### Testing
 [ ] Playbook
@@ -59,16 +60,18 @@
 [X] Add Task to build Hugo Container
 
 ### Testing
-[ ] Playbook
-[ ] Hugo Podman Container
+[X] Playbook
+[X] Hugo Podman Container
 
 ### Documentation
 [X] Readme is Updated
 
 
-## Parents VPN
+## DeathStr2
 ### Build Playbook
-[ ] Complete
+[X] Download OpenVPN Script
+[X] Download PiHole Script
+[X] Upload FileSync Service/Timer to Server
 
 ### Testing
 [ ] Complete
