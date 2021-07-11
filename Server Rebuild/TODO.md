@@ -6,6 +6,7 @@
 [X] Transition from Apt to DNF
 [X] Changing Naming of Services from Docker to Podman
 [X] Add Cockpit Integrartions (navigator and Podman)
+[ ] Install EPel and Git
 [ ] Optional: Determine issue with CloudC2 Container (Not Building)
 
 ### Testing
