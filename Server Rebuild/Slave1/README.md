@@ -25,7 +25,7 @@ UUID="DA783ECE783EA961" /mnt/BackUp     auto    defualts        0       2
 1. Copy your `smb.conf` and `cockpit-file-sharing.exports` to the Config_Files on the ansible server
 2. Run the Playbook
 
-##Change Log
+## Change Log
 * Trasition from Traditional SMB Config to Cockpit-File-Sharing
 * Trasition from Traditional NFS Config to Cockpit-File-Sharing
 * Add ZFS Config
