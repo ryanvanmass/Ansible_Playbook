@@ -1,5 +1,17 @@
 ---
-  - name: Download Required Github Repos
+- name: Download Basic Packages
+  hosts: Chimeara
+  tasks:
+      - name: Extra Packages for Enterprise Linux
+        dnf:
+          name: peel-release
+          state: latest
+      - name: Git
+        dnf:
+          name: git
+          state: latest
+          
+- name: Download Required Github Repos
     hosts: Chimeara
     tasks: 
       - name: Upodder
