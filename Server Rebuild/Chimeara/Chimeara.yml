@@ -2,30 +2,30 @@
   - name: Download Basic Packages
     hosts: Chimeara
     tasks:
-        - name: Extra Packages for Enterprise Linux
-          dnf:
-            name: peel-release
-            state: latest
-        - name: Git
-          dnf:
-            name: git
-            state: latest
+      - name: Extra Packages for Enterprise Linux
+        dnf:
+          name: epel-release
+          state: latest
+      - name: Git
+        dnf:
+          name: git
+          state: latest
             
   - name: Download Required Github Repos
-      hosts: Chimeara
-      tasks: 
-        - name: Upodder
-          git:
-            repo: https://github.com/ryanvanmass/upodder
-            dest: /root/Upodder
-        - name: Youtube-DL
-          git:
-            repo: https://github.com/ryanvanmass/youtube-dl
-            dest: /root/YoutubeDL
-        - name: CloudC2
-          git:
-            repo: https://github.com/ryanvanmass/cloudc2
-            dest: /root/CloudC2
+   hosts: Chimeara
+   tasks: 
+    - name: Upodder
+      git:
+        repo: https://github.com/ryanvanmass/upodder
+        dest: /root/Upodder
+    - name: Youtube-DL
+      git:
+        repo: https://github.com/ryanvanmass/youtube-dl
+        dest: /root/YoutubeDL
+    - name: CloudC2
+      git:
+        repo: https://github.com/ryanvanmass/cloudc2
+        dest: /root/CloudC2
     
   - name: Build podman Images
     hosts: Chimeara
