@@ -60,7 +60,7 @@
 
 ### Testing
 [X] Playbook
-[ ] Hugo Podman Container
+[X] Hugo Podman Container
 
 ### Documentation
 [X] Readme is Updated
@@ -68,9 +68,9 @@
 
 ## DeathStr2
 ### Build Playbook
-[ ] Download OpenVPN Script
-[ ] Download PiHole Script
-[ ] Upload FileSync Service/Timer to Server
+[X] Download OpenVPN Script
+[X] Download PiHole Script
+[X] Upload FileSync Service/Timer to Server
 
 ### Testing
 [ ] Complete

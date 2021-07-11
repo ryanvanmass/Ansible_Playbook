@@ -1,0 +1,60 @@
+---
+  - name: Downloading Scripts for Setting up OpenVPN and PiHole
+    hosts: DeathStar2
+    tasks:
+      - name: OpenVPN
+        shell: wget https://git.io/vpn -O /root/openvpn-install.sh && chmod 755 /root/openvpn-install.sh
+      - name: PiHole
+        get_url:
+          url: https://raw.githubusercontent.com/pi-hole/pi-hole/master/automated%20install/basic-install.sh 
+          dest: /root/
+      
+      - name: Set SELinux Policy
+        selinux:
+          policy: targeted
+          state: permissive
+  
+  - name: Connect to NFS Share on DeathStar
+    hosts: DeathStar2
+    vars_prompt:
+      - name: NFS_IP
+        prompt: What is the IP address of the NFS Share?
+        private: no
+    tasks:
+      - name: Install NFS Utility
+        dnf:
+          name: nfs-utility
+          state: latest
+      - name: Create Mount Point Directory
+        file:
+          path: /media/root/FileSync/
+          state: directory
+      - name: create Fstab Entry
+        mount:
+          state: "mounted"
+          fstype: "nfs"
+          name: /media/root/FileSync
+          src: "{{NFS_IP}}:/media/FileSync"
+          opts: defaults
+          dump: 0
+          passno: 0
+
+  - name: Make File Structure
+    hosts: DeathStar2
+    tasks:
+      - name: OpenVPN Folder
+        file:
+            path: /root/OpenVPN/
+            state: directory
+  
+  - name: Copy FileSync Service/Timer to Server
+    hosts: DeathStar2
+    tasks:
+      - name: FileSync Service
+        copy:
+          src: /root/Playbooks/Server Rebuild/DeathStar2/Systemd Timer/FileSync.service
+          dest: /etc/systemd/system
+      - name: Playlist_Sync Timer
+        copy:
+          src: /root/Playbooks/Server Rebuild/DeathStar2/Systemd Timer/FileSync.timer
+          dest: /etc/systemd/system

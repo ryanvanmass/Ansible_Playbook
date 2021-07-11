@@ -1,0 +1,9 @@
+[Unit]
+Description=FileSync
+
+[Service]
+Type=oneshot
+#Podcast Sync
+ExecStart=sh -c 'cp -r /root/OpenVPN/* /media/root/FileSync/DeathStar2'
+
+WorkingDirectory=/
