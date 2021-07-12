@@ -47,7 +47,7 @@
     tasks:
       - name: Install NFS Utility
         dnf:
-          name: nfs-utility
+          name: nfs-utils
           state: latest
       - name: Create Mount Point Directory
         file:
