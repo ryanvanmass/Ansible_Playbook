@@ -104,7 +104,7 @@
       - name: Add 45 Drives Repo
         shell: curl -o /etc/yum.repos.d/45drives.repo http://images.45drives.com/repo/centos/45drives-centos.repo
       - name: refresh cached Package List
-        shell: dnf clean all && dnf makecache
+        shell: dnf clean all -y && dnf makecache -y
       - name: Cockpit-Navigator  
         dnf:
           name: cockpit-navigator
