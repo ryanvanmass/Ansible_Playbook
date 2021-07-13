@@ -6,14 +6,14 @@
 [X] Transition from Apt to DNF
 [X] Changing Naming of Services from Docker to Podman
 [X] Add Cockpit Integrartions (navigator and Podman)
-[ ] Install EPel and Git
+[X] Install EPel and Git
 [ ] Optional: Determine issue with CloudC2 Container (Not Building)
 
 ### Testing
-[ ] Playbook
+[X] Playbook
 
 ### Documentation
-[ ] Readme is Updated
+[X] Readme is Updated
 
 
 ## DeathStar
@@ -23,7 +23,7 @@
 [X] Remove Nextcloud/Docker Configuration
 [X] Clean Up Default Shell Configuration
 [X] Add Cockpit Itegrations (Navigator and Cockpit-File-Sharing)
-[ ] Update FileSync Service to include DeathStar2
+[X] Update FileSync Service to include DeathStar2
 
 ### Testing
 [ ] Playbook
@@ -79,15 +79,3 @@
 ### Documentation
 [ ] Completed
 
-## Transition from CentOS Steam To Rocky
-### Development
-[X] Test Script
-	**Broken**
-[ ] Build Playbook
-
-### Testing
-[ ] Test Locally
-[ ] Test in Digital Ocean
-
-### Documentation
-[ ] Readme is Updated
