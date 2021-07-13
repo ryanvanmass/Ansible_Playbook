@@ -1,6 +1,9 @@
 # DeathStar
+## Role
+Acts as a bridge between my local and cloud infastructure
 ## Services
 * OpenVPN
+* PiHole
 * NFS
 * Ansible
 

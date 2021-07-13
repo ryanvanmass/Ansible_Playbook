@@ -26,10 +26,10 @@
 [X] Update FileSync Service to include DeathStar2
 
 ### Testing
-[ ] Playbook
+[X] Playbook
 
 ### Documentation
-[ ] Readme is Updated
+[X] Readme is Updated
 
 
 ## Ghost
