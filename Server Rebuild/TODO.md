@@ -35,18 +35,6 @@
 ## Ghost
 [X] Determine if this is still needed
 
-
-## HDMIFS
-### Development
-[ ] Add Cockpit Itegration
-
-### Testing
-[ ] Complete
-
-### Documentation
-[ ] Readme is Updated
-
-
 ## Slave1
 ### Development
 [X] Trasition from Traditional SMB Config to Cockpit-File-Sharing
@@ -74,8 +62,8 @@
 [X] Upload FileSync Service/Timer to Server
 
 ### Testing
-[ ] Complete
+[X] Complete
 
 ### Documentation
-[ ] Completed
+[X] Completed
 
