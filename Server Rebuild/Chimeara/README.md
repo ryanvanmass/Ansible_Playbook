@@ -1,9 +1,12 @@
-# Chimeara Docker Host
+# Chimeara Podman Hosts
+## Role
+This Server acts as a automatic Podcast and Video (Youtube) Downloader in addition to a CLoudC2 Server
+
 ## Services
-* Docker
+* Podman
 * NFS
 
-### Docker Containers
+### Podman Containers
 (All build from Dockerfile)
 * Youtube-Dl
 * Upodder

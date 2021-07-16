@@ -5,23 +5,11 @@ Acts as a bridge between my local and cloud infastructure
 * OpenVPN
 * PiHole
 * NFS
-* Ansible
+
 
 ## Setup
-### Ansible
-1. Install Ansible
-```
-    dnf install ansible
-```
-2. Generate SSH Keys
-```
-    ssh-keygen
-```
-3. Copy Ansible Server Public key to `~/.ssh/authorized_keys` file on destination servers
-4. Add Destination Servers ip to `/etc/ansible/hosts`
-
 ### Playbook
-Run the DeathStar Ansible Playbook
+Run the DeathStar2 Ansible Playbook
 ```
     ansible-playbook DeathStar.yml
 ```

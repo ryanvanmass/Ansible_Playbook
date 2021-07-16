@@ -26,13 +26,27 @@
         dnf:
           name: nfs-utils
           state: latest
-      - name: Create Podcast Sync Mount Point
+#This will allow you to manage your NFS share from within Cockpit
+      - name: Add 45 Drives Repo
+        shell: curl -o /etc/yum.repos.d/45drives.repo http://images.45drives.com/repo/centos/45drives-centos.repo
+      - name: refresh cached Package List
+        shell: dnf clean all -y && dnf makecache -y
+      - name: Cockpit-File-Sharing
+        dnf:
+          name: cockpit-file-sharing
+          state: latest
+      - name: Cockpit-Navigator  
+        dnf:
+          name: cockpit-navigator
+          state: latest
+# Create File Share          
+      - name: Create File Sync Mount Point
         file:
           path: /media/FileSync
           state: directory
           mode: 0777
       - name: Create NFS Export Entry for Podcast Sync
-        shell: echo "/media/FileSync {{NFS_Network}}(rw,sync,no_root_squash)" >> /etc/exports
+        shell: echo "/media/FileSync {{NFS_Network}}(rw,sync,no_root_squash)" >> /etc/exports.d/cockpit-file-sharing.exports
       - name: Restart NFS Service
         systemd:
           name: nfs-server
@@ -45,7 +59,7 @@
           permanent: yes
           state: enabled
           immediate: yes
-  
+#These Services are responsible for the sync of files between the Cloud Server and the Local Server (Deathstar to Slave1)  
   - name: Set up Systemd Timers and services
     hosts: localhost
     tasks:
@@ -58,37 +72,6 @@
           src: /root/Playbooks/Server Rebuild/DeathStar/Systemd Timer/FileSync.timer
           dest: /etc/systemd/system
 
-  - name: Setting up Nextcloud
-    hosts: localhost
-    tasks:
-      - name: Adding Docker Repo
-        shell: dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
-      - name: Install Docker
-        dnf:
-          name: docker-ce
-          state: latest
-      - name: Start Docker
-        systemd:
-          name: docker
-          state: restarted
-          daemon_reload: yes
-          enabled: yes
-      - name: Pulling Nextcloud Image
-        shell: docker pull nextcloud:latest
-      - name: Creating Directory Structure
-        shell: mkdir -p /media/Nextcloud/Olympus && mkdir /media/Nextcloud/Hades && mkdir /media/Nextcloud/Labyrinth && mkdir /media/Nextcloud/Styx && mkdir /media/Nextcloud/LAB
-      - name: Create Nextcloud Container
-        shell: docker run -d -p 7926:80 --mount type=bind,source='/media/Nextcloud',target='/mnt' --name Nextcloud nextcloud:latest
-
-
-
-
-
-
-
-
-
-
 
   - name: Configuring Default Shell
     hosts: localhost
@@ -97,10 +80,6 @@
         dnf:
           name: fish
           state: latest
-      - name: Set Default Shell
-        user:
-          user: root
-          shell: /bin/fish
       - name: Create Config Directory
         file:
           path: ~/.config/fish

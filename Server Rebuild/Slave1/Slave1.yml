@@ -1,5 +1,5 @@
 ---
-  - name: Install Required Packages
+  - name: Install Basic Packages
     hosts: Slave1
     tasks:
       - name: NFS-Utils
@@ -26,22 +26,60 @@
         dnf:
           name: git
           state: latest
-      - name: Hugo
+      - name: Extra Packages for Enterprise Linux
         dnf:
-          name: hugo
+          name: epel-release
+          state: latest
+      - name: Samba
+        dnf:
+          name: samba
+          state: latest
+      - name: Fish
+        dnf:
+          name: fish
           state: latest
 
-  - name: Create VPN NFS Shares
+# Installing Packages for ZFS and doing basic Config
+  - name: Install and Configure ZFS
     hosts: Slave1
     tasks:
-      - name: Header
-        shell: echo "# VPN Shares" >> /etc/exports
-      - name: Olympus
-        shell: echo "/mnt/NetworkShares/Olympus 10.8.0.0/24(rw,sync,no_root_squash)" >> /etc/exports
-      - name: Hades
-        shell: echo "/mnt/NetworkShares/Hades 10.8.0.0/24(rw,sync,no_root_squash)" >> /etc/exports
-      - name: Labyrinth
-        shell: echo "/mnt/NetworkShares/Labyrinth 10.8.0.0/24(rw,sync,no_root_squash)" >> /etc/exports
+      - name: Install Mbuffer
+        dnf:
+          name: mbuffer
+          state: latest
+      - name: Add ZFS Repo
+        shell: sudo dnf install https://zfsonlinux.org/epel/zfs-release.el8_4.noarch.rpm -y
+      - name: Import GPG Key
+        shell: gpg --import --import-options show-only /etc/pki/rpm-gpg/RPM-GPG-KEY-zfsonlinux
+      - name: Install Kernel-devel
+        dnf:
+          name: kernel-devel
+          state: latest
+      - name: Install ZFS
+        dnf:
+          name: zfs
+          state: latest
+      - name: Enable ZnapZend Repo
+        shell: sudo dnf copr enable spike/znapzend -y
+      - name: Install ZnapZend
+        dnf:
+          name: znapzend
+          state: latest
+      - name: Enable Znapzend Service
+        systemd:
+          name: znapzend
+          state: restarted
+          daemon_reload: yes
+          enabled: yes
+      - name: Set ZFS Module to load at boot
+        cron:
+          name: "Load ZFS Module"
+          special_time: reboot
+          job: "/sbin/modprobe zfs"
+          
+  - name: Configure NFS Service
+    hosts: Slave1
+    tasks:
       - name: Restart NFS Service
         systemd:
           name: nfs-server
@@ -55,27 +93,49 @@
           state: enabled
           immediate: yes
 
-  - name: Create Local NFS Shares
+# Starting work on Transitioning from Traditional SMB and NFS Config to using cockpit-file-sharing by 45Drives
+  - name: Install Cockpit Modules
     hosts: Slave1
-    vars_prompt:
-      - name: NFS_Network
-        prompt: What is the Network address for the Local NFS Share?
-        private: no
     tasks:
-      - name: Header
-        shell: echo "# Local Shares" >> /etc/exports
-      - name: Olympus
-        shell: echo "/mnt/NetworkShares/Olympus {{NFS_Network}}(rw,sync,no_root_squash)" >> /etc/exports
-      - name: Hades
-        shell: echo "/mnt/NetworkShares/Hades {{NFS_Network}}(rw,sync,no_root_squash)" >> /etc/exports
-      - name: Labyrinth
-        shell: echo "/mnt/NetworkShares/Labyrinth {{NFS_Network}}(rw,sync,no_root_squash)" >> /etc/exports
-      - name: Restart NFS Service
-        systemd:
-          name: nfs-server
-          state: restarted
-          daemon_reload: yes
-          enabled: yes
+      - name: Add 45 Drives Repo
+        shell: curl -o /etc/yum.repos.d/45drives.repo http://images.45drives.com/repo/centos/45drives-centos.repo
+      - name: refresh cached Package List
+        shell: sudo dnf clean all -y && sudo dnf makecache -y
+      - name: Cockpit-File-Sharing
+        dnf:
+          name: cockpit-file-sharing
+          state: latest
+      - name: Cockpit-Navigator  
+        dnf:
+          name: cockpit-navigator
+          state: latest
+      - name: ZFS Manager
+        dnf:
+          name: https://github.com/45Drives/cockpit-zfs-manager/releases/download/v1.3.0/cockpit-zfs-manager-1.3.0-2.el8.noarch.rpm
+          state: latest
+          disable_gpg_check: yes
+          
+  - name: Configuring Samba Shares
+    hosts: Slave1
+    tasks:
+      - name: Copy Config File to Server
+        copy:
+          src: /root/Playbooks/Server Rebuild/Slave1/Config_Files/smb.conf
+          dest: /home/ryan/Config_Files/
+      - name: Set correct Permission for Config_Files folder
+        shell: sudo chown -R ryan /home/ryan/Config_Files && sudo chgrp -R ryan /home/ryan/Config_Files
+      - name: Import Config File
+        shell: net conf import /home/ryan/Config_Files/smb.conf
+  
+  - name: Configure NFS Shares
+    hosts: Slave1
+    tasks:
+      - name: Copy Copy Config File to Server
+        copy:
+          src: /root/Playbooks/Server Rebuild/Slave1/Config_Files/cockpit-file-sharing.exports
+          dest: /home/ryan/Config_Files/
+      - name: Import Config
+        shell: cp /home/ryan/Config_Files/cockpit-file-sharing.exports /etc/exports.d/  
 
 #Uncomment if you need to rebuild Config File
 #  - name: Rclone Configuration
@@ -100,75 +160,28 @@
 #            (.*)y/e/d>(.*): "y"
 #            (.*)e/n/d/r/c/s/q>(.*): "q"
 
-  - name: Set up Network Share Backup
+  - name: Disable SELinux
     hosts: Slave1
     tasks:
-      - name: Copying Network Share Backup Service
-        copy:
-          src: /root/Playbooks/Server Rebuild/Slave1/Systemd Timer/NetworkShare_Backup.service
-          dest: /etc/systemd/system
-      - name: Copying Network Share Backup Timer
-        copy:
-          src: /root/Playbooks/Server Rebuild/Slave1/Systemd Timer/NetworkShare_Backup.timer
-          dest: /etc/systemd/system
-      - name: Create Log Directory
-        file:
-          path: /var/log/NetworkShare_Backup
-          state: directory
-      - name: Starting Timer
-        systemd:
-          name: NetworkShare_Backup.timer
-          state: restarted
-          daemon_reload: yes
-          enabled: yes
-      
-      - name: Set SELinux Policy
-        selinux:
-          policy: targeted
-          state: permissive
-    
-  - name: Set up Cloud Backup
-    hosts: Slave1
-    tasks:
-    - name: Copying Cloud Backup Service
-      copy:
-        src: /root/Playbooks/Server Rebuild/Slave1/Systemd Timer/Cloud_Backup.service
-        dest: /etc/systemd/system
-    - name: Copying Cloud Backup Timer
-      copy:
-        src: /root/Playbooks/Server Rebuild/Slave1/Systemd Timer/Cloud_Backup.timer
-        dest: /etc/systemd/system
-    - name: Create Log Directory
-      file:
-        path: /var/log/Cloud_Backup
-        state: directory
-    - name: Starting Timer
-      systemd:
-        name: Cloud_Backup.timer
-        state: restarted
-        daemon_reload: yes
-        enabled: yes
+    - name: Set SELinux Policy
+      selinux:
+        policy: targeted
+        state: permissive
 
   - name: Configure Hugo
     hosts: Slave1
     tasks:
+      - name: Copy Podman Build File to Slave1
+        copy:
+          src: /root/Playbooks/Server Rebuild/Slave1/Podman
+          dest: /home/ryan/
+      - name: Set correct Permission for Podman folder
+        shell: sudo chown -R ryan /home/ryan/Podman && sudo chgrp -R ryan /home/ryan/Podman 
+      - name: Build Hugo Container
+        shell: podman build -t hugo /home/ryan/Podman/Hugo_Server/
       - name: Allow Port 1313 through the Firewall
         firewalld:
           port: 1313/tcp
           permanent: true
           state: enabled
           immediate: yes
-
-  - name: Configuring Default Shell
-    hosts: Slave1
-    tasks:
-      - name: Download Fish
-        dnf:
-          name: fish
-          state: latest
-      - name: Create Config Directory
-        file:
-          path: ~/.config/fish
-          state: directory
-      - name: Create Config File
-        shell: echo "#Remove Fish Welcome Message" >> ~/.config/fish/config.fish && echo "function fish_greeting" >> ~/.config/fish/config.fish && echo "end" >> ~/.config/fish/config.fish

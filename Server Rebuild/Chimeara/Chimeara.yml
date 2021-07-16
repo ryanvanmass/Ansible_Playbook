@@ -1,4 +1,16 @@
 ---
+  - name: Download Basic Packages
+    hosts: Chimeara
+    tasks:
+      - name: Extra Packages for Enterprise Linux
+        dnf:
+          name: epel-release
+          state: latest
+      - name: Git
+        dnf:
+          name: git
+          state: latest
+            
   - name: Download Required Github Repos
     hosts: Chimeara
     tasks: 
@@ -14,16 +26,17 @@
         git:
           repo: https://github.com/ryanvanmass/cloudc2
           dest: /root/CloudC2
-  
-  - name: Build Docker Images
+    
+  - name: Build podman Images
     hosts: Chimeara
     tasks:
       - name: Upodder
-        shell: docker build -t upodder /root/Upodder
+        shell: podman build -t upodder /root/Upodder
       - name: Youtube-DL
-        shell: docker build -t youtubedl /root/YoutubeDL
-      - name: CloudC2
-        shell: sh /root/CloudC2/Setup.sh "apt" && mv C2/ CloudC2/ && docker build -t cloudc2 /root/CloudC2
+        shell: podman build -t youtubedl /root/YoutubeDL
+# Comment out due to Build Error that needs to be fixed
+#      - name: CloudC2
+#        shell: sh /root/CloudC2/Setup.sh "apt" && mv C2/ CloudC2/ && podman build -t cloudc2 /root/CloudC2
   
   - name: Connect to NFS Share on DeathStar
     hosts: Chimeara
@@ -33,8 +46,8 @@
         private: no
     tasks:
       - name: Install NFS Utility
-        apt:
-          name: nfs-common
+        dnf:
+          name: nfs-utils
           state: latest
       - name: Create Mount Point Directory
         file:
@@ -57,16 +70,16 @@
       - name: Modify Setup.sh to Create File Structure
         shell: echo " " >> /root/Upodder/Setup.sh && echo 'mkdir -p /media/root/FileSync/Podcast/$1' >> /root/Upodder/Setup.sh
       - name: Modify Setup.sh to shedule the container to Auto-run
-        shell: echo "echo \"ExecStart=docker run --rm -v \"/media/root/FileSync/Podcast/\$1:/mnt/output\" -v \"/root/Upodder/Podcasts/\$1/config:/mnt/config\" upodder\" >> /etc/systemd/system/docker_podcast.service" >> /root/Upodder/Setup.sh
+        shell: echo "echo \"ExecStart=podman run --rm -v \"/media/root/FileSync/Podcast/\$1:/mnt/output\" -v \"/root/Upodder/Podcasts/\$1/config:/mnt/config\" upodder\" >> /etc/systemd/system/podman_podcast.service" >> /root/Upodder/Setup.sh
       - name: Modify Setup.sh to refresh Systemd Services
         shell: echo 'systemctl daemon-reload' >> /root/Upodder/Setup.sh
       - name: Copy Service to Host
         copy:
-          src: /root/Playbooks/Server Rebuild/Chimeara/Systemd Timers/docker_podcast.service
+          src: /root/Playbooks/Server Rebuild/Chimeara/Systemd Timers/podman_podcast.service
           dest: /etc/systemd/system
       - name: Copy Timer to Host
         copy:
-          src: /root/Playbooks/Server Rebuild/Chimeara/Systemd Timers/docker_podcast.timer
+          src: /root/Playbooks/Server Rebuild/Chimeara/Systemd Timers/podman_podcast.timer
           dest: /etc/systemd/system
 
   - name: Setup Youtube-DL Automation
@@ -78,9 +91,21 @@
           dest: /root/YoutubeDL/Setup.sh
       - name: Copy Service to Host
         copy:
-          src: /root/Playbooks/Server Rebuild/Chimeara/Systemd Timers/docker_video.service
+          src: /root/Playbooks/Server Rebuild/Chimeara/Systemd Timers/podman_video.service
           dest: /etc/systemd/system
       - name: Copy Timer to Host
         copy:
-          src: /root/Playbooks/Server Rebuild/Chimeara/Systemd Timers/docker_video.timer
+          src: /root/Playbooks/Server Rebuild/Chimeara/Systemd Timers/podman_video.timer
           dest: /etc/systemd/system
+
+  - name: Add Cockpit Modules
+    hosts: Chimeara
+    tasks:
+      - name: Add 45 Drives Repo
+        shell: curl -o /etc/yum.repos.d/45drives.repo http://images.45drives.com/repo/centos/45drives-centos.repo
+      - name: refresh cached Package List
+        shell: dnf clean all -y && dnf makecache -y
+      - name: Cockpit-Navigator  
+        dnf:
+          name: cockpit-navigator
+          state: latest
