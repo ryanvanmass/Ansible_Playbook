@@ -1,17 +1,18 @@
-# DeathStar
-## Role
-Acts as a bridge between my local and cloud infastructure
-## Services
+## System Requirements
+**OS:** Ubuntu
+
+**VPS:** DigitalOcean
+
+### Services
 * OpenVPN
 * PiHole
 * NFS
-* Ansible
 
 ## Setup
 ### Ansible
 1. Install Ansible
 ```
-    dnf install ansible
+    apt install ansible
 ```
 2. Generate SSH Keys
 ```
@@ -23,7 +24,7 @@ Acts as a bridge between my local and cloud infastructure
 ### Playbook
 Run the DeathStar Ansible Playbook
 ```
-    ansible-playbook DeathStar.yml
+    ansible-playbook Deploy.yml
 ```
 
 ### OpenVPN
@@ -60,5 +61,5 @@ push "dhcp-option DNS 10.8.0.1"
 ```
 14. Login to web portal and change password
 
-### Podcast_Sync and Video_Sync
-1. Edit `FileSync.service` to update the IP address of the rsync command to the VPN IP of the Slave1
+### File_Sync
+Is a pre-configured Service that can be used as a template for syncing content between a NAS on your Local Network and your cloud deployment

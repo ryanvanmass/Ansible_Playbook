@@ -1,0 +1,48 @@
+---
+  - name: Download Basic Packages
+    hosts: Kamino
+    tasks:
+      - name: git
+        dnf:
+          name: git
+          state: latest
+      - name: tmux
+        dnf:
+          name: tmux
+          state: lastes
+      - name: cockpit
+        dnf:
+          name: cockpit
+          state: latest
+      - name: cockpit-machines
+        dnf:
+          name: cockpit-machines
+          state: latest
+      - name: virt-viewer
+        dnf:
+          name: virt-viewer
+          state: latest
+      - name: Extra Packages for Enterprise Linux
+        dnf:
+          name: epel-release
+          state: latest
+
+  - name: Update Firewall Rules
+    hosts: Kamino
+    tasks:
+      - name: Allow Cockpit Service
+        firewalld:
+          service: cockpit
+          permanent: yes
+          immediate: yes
+          state: enabled
+      - name: Allow Ports used by SPICE/VNC
+        firewalld:
+          port: 5901-5910/tcp
+          permanent: yes
+          immediate: yes
+          state: latest
+      - name: Disable SELinux
+        selinux:
+          policy: targeted
+          state: permissive

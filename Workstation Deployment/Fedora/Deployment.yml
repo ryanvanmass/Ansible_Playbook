@@ -1,0 +1,17 @@
+---
+  - name: Download Basic Packages
+    hosts: localhost
+    tasks:
+      - name: Fish
+        dnf:
+          name: fish
+          state: latest
+      - name: Remmina
+        dnf:
+          name: remmina
+          state: latest
+      - name: OpenVPN
+        dnf:
+          name: openvpn
+          state: latest
+      - name: 

@@ -1,4 +1,5 @@
 ---
+# Downloading the majority of the packages needed to run the server
   - name: Install Basic Packages
     hosts: Slave1
     tasks:
@@ -38,8 +39,12 @@
         dnf:
           name: fish
           state: latest
+      - name: XRDP
+        dnf:
+          name: xrdp 
+          state: latest
 
-# Installing Packages for ZFS and doing basic Config
+# Installing Packages for ZFS and sets it up
   - name: Install and Configure ZFS
     hosts: Slave1
     tasks:
@@ -93,7 +98,7 @@
           state: enabled
           immediate: yes
 
-# Starting work on Transitioning from Traditional SMB and NFS Config to using cockpit-file-sharing by 45Drives
+# Downloads File-Sharing Cockpit Module and Imports the SMB and NFS Configs to it
   - name: Install Cockpit Modules
     hosts: Slave1
     tasks:
@@ -168,6 +173,7 @@
         policy: targeted
         state: permissive
 
+# Configures the Hugo Container
   - name: Configure Hugo
     hosts: Slave1
     tasks:
@@ -182,6 +188,34 @@
       - name: Allow Port 1313 through the Firewall
         firewalld:
           port: 1313/tcp
+          permanent: true
+          state: enabled
+          immediate: yes
+
+# Download and Start Nextcloud Container
+  - name: Download and Install Nextcloud
+    hosts: Slave1
+    tasks:
+      - name: Download Nextcloud
+        shell: podman pull nextcloud:latest
+      - name: Start Nextcloud
+        shell: podman run -d -p 8080:80 -v /mnt/NetworkShares:/mnt --name Nextcloud nextcloud
+      - name: Allow Port 8080 through the Firewall
+        firewalld:
+          port: 8080/tcp
+          permanent: true
+          state: enabled
+          immediate: yes
+
+# Download, Build, and Start VSCode Container
+  - name: Download VSCode Server
+    hosts: Slave1
+    tasks:
+      - name: Download Git Repo
+        shell: git clone https://github.com/ryanvanmass/vscode-server /home/ryan/Podman/VSCode
+      - name: Allow Port 8090 through the Firewall
+        firewalld:
+          port: 8090/tcp
           permanent: true
           state: enabled
           immediate: yes

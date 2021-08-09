@@ -23,21 +23,8 @@
         private: no
     tasks:
       - name: Install NFS-Utils
-        dnf:
-          name: nfs-utils
-          state: latest
-#This will allow you to manage your NFS share from within Cockpit
-      - name: Add 45 Drives Repo
-        shell: curl -o /etc/yum.repos.d/45drives.repo http://images.45drives.com/repo/centos/45drives-centos.repo
-      - name: refresh cached Package List
-        shell: dnf clean all -y && dnf makecache -y
-      - name: Cockpit-File-Sharing
-        dnf:
-          name: cockpit-file-sharing
-          state: latest
-      - name: Cockpit-Navigator  
-        dnf:
-          name: cockpit-navigator
+        apt:
+          name: nfs-kernel-server
           state: latest
 # Create File Share          
       - name: Create File Sync Mount Point
@@ -53,36 +40,36 @@
           state: restarted
           daemon_reload: yes
           enabled: yes
-      - name: Allow NFS through Firewall
-        firewalld:
-          service: nfs
-          permanent: yes
-          state: enabled
-          immediate: yes
-#These Services are responsible for the sync of files between the Cloud Server and the Local Server (Deathstar to Slave1)  
+# Configure Firewall (UFW)
+  - name: Configure UFW
+    hosts: localhost
+    tasks:
+      - name: Set Default Profiles
+        shell: ufw default deny incoming && ufw default allow outgoing
+      - name: Allow SSH
+        - ufw:
+            rule: limit
+            port: ssh
+            proto: tcp
+      - name: Allow NFS
+        - ufw:
+            rule: allow
+            port: nfs
+            proto: tcp
+            interface: eth1
+      - name: Enable UFW
+        shell: ufw enable
+
+#These Services are responsible for the sync of files between the Cloud Server and the Local Server (OpenVPN&PiHole to Slave1)  
   - name: Set up Systemd Timers and services
     hosts: localhost
     tasks:
       - name: FileSync Service
         copy:
-          src: /root/Playbooks/Server Rebuild/DeathStar/Systemd Timer/FileSync.service
+          src: /root/Playbooks/App Deployment/OpenVPN&PiHole/Systemd Timer/FileSync.service
           dest: /etc/systemd/system
       - name: Playlist_Sync Timer
         copy:
-          src: /root/Playbooks/Server Rebuild/DeathStar/Systemd Timer/FileSync.timer
+          src: /root/Playbooks/App Deployment/OpenVPN&PiHole/Systemd Timer/FileSync.timer
           dest: /etc/systemd/system
 
-
-  - name: Configuring Default Shell
-    hosts: localhost
-    tasks:
-      - name: Download Fish
-        dnf:
-          name: fish
-          state: latest
-      - name: Create Config Directory
-        file:
-          path: ~/.config/fish
-          state: directory
-      - name: Create Config File
-        shell: echo "#Remove Fish Welcome Message" >> ~/.config/fish/config.fish && echo "function fish_greeting" >> ~/.config/fish/config.fish && echo "end" >> ~/.config/fish/config.fish

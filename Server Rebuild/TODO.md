@@ -23,7 +23,9 @@
 
 ## Slave1
 ### Development
-[ ] Add xrdp
+[X] Add xrdp
+[X] Add Nextcloud Container
+[X] Add VS Code Container
 
 ### Testing
 
@@ -43,7 +45,7 @@
 
 ## Kamino
 ### Development
-[ ] Create Playbook
+[X] Create Playbook
 	- xrdp
 	- cockpit-machines
 	- epel-release
@@ -55,3 +57,13 @@
 ### Documentation
 [ ] Created
 
+## HDMIFS
+### Development
+[ ] Rebuild Playbook to use podman for nextcloud instead of Snap
+[ ] Add Cockpit integration
+
+### Testing
+[ ] Playbook
+
+### Documentation
+[ ] Readme Updated
