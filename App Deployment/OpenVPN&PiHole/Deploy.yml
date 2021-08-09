@@ -56,7 +56,8 @@
             rule: allow
             port: nfs
             proto: tcp
-            interface: eth1
+# Commented out for Local Testing will test in DO before Deployment
+#            interface: eth1
       - name: Enable UFW
         shell: ufw enable
 
